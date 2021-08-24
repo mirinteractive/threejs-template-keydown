@@ -1,11 +1,9 @@
 import './style.css'
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
-import * as dat from 'dat.gui'
 import { RectAreaLightHelper } from 'three/examples/jsm/helpers/RectAreaLightHelper.js'
 import { PointerLockControls } from 'three/examples/jsm/controls/PointerLockControls.js'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
-import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader.js';
 import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader.js';
 import { MTLLoader } from 'three/examples/jsm/loaders/MTLLoader.js';
 
@@ -13,9 +11,6 @@ import { MTLLoader } from 'three/examples/jsm/loaders/MTLLoader.js';
 /**
  * Base
  */
-// Debug
-const gui = new dat.GUI()
-
 // Canvas
 const canvas = document.querySelector('canvas.webgl')
 
@@ -62,12 +57,8 @@ const spotLight = new THREE.SpotLight(0x78ff00, 0.5, 10, Math.PI*0.1, 0.25, 1)
 spotLight.position.set(0, 2, 3)
 scene.add(spotLight)
 //add target to move around
-spotLight.target.position.x = -1.75
+spotLight.target.position.set(-1.75, 0, 0)
 scene.add(spotLight.target)
-
-
-//debug panel
-gui.add(ambientLight, 'intensity').min(0).max(1).step(0.01)
 
 /**
  * helpers
@@ -111,27 +102,26 @@ const sphere = new THREE.Mesh(
     new THREE.SphereGeometry(0.5, 32, 32),
     material
 )
-sphere.position.x = - 1.5
+sphere.position.set(- 1.5, 0, 0)
 
 const cube = new THREE.Mesh(
     new THREE.BoxGeometry(0.75, 0.75, 0.75),
     material
 )
-cube.position.x =- 1.2
-cube.position.z = - 2
+cube.position.set(-1.2, 0, -2)
 
 const torus = new THREE.Mesh(
     new THREE.TorusGeometry(0.3, 0.2, 32, 64),
     material
 )
-torus.position.x = 1.5
+torus.position.set(1.5, 0, 0) 
 
 const plane = new THREE.Mesh(
     new THREE.PlaneGeometry(50, 50),
     material
 )
-plane.rotation.x = - Math.PI * 0.5
-plane.position.y = - 0.65
+plane.rotation.set(- Math.PI * 0.5, 0, 0)
+plane.position.set(0, -0.65, 0)
 
 scene.add(sphere, cube, torus, plane)
 
@@ -146,15 +136,6 @@ gltfLoader.load(gltfURL,(gltf) => {
         scene.add(gltf.scene)
     }
 )
-
-//fbx
-//  let fbxURL = "/models/fbx/test_01.fbx"; 
-//  const fbxLoader = new FBXLoader(); 
-//  fbxLoader.load(fbxURL,(fbx) => {
-//     scene.add(fbx.scene)
-// }
-// )
-//result: loader에 문제가 있는듯하다
  
 //obj
 const mtlLoader = new MTLLoader();
@@ -165,12 +146,10 @@ mtlLoader.load(mtlURL, (mtl) => {
     mtl.preload();
     objLoader.setMaterials(mtl);
     objLoader.load(objURL,(obj) => {
-        obj.position.y =- 0.8
-        obj.position.x =+ 3
-        obj.rotation.y =+ 10
+        obj.position.set(3, -0.8, 0)
+        obj.rotation.set(0, 10, 0)
         obj.scale.set(0.0015, 0.0015, 0.0015)
         scene.add(obj)
-        console.log(obj)
         }
     )
 })
@@ -203,9 +182,7 @@ window.addEventListener('resize', () =>
  */
 // Base camera
 const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height, 0.1, 100)
-// camera.position.x = 1
-camera.position.y = 1
-camera.position.z = 2
+camera.position.set(0, 1, 2)
 scene.add(camera)
 
 // Controls
