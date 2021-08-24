@@ -123,10 +123,6 @@ const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height, 0.1, 
 camera.position.set(0, 1, 2)
 scene.add(camera)
 
-// Controls
-// const controls = new OrbitControls(camera, canvas)
-// controls.enableDamping = true
-
 /**
  * Renderer
  */
@@ -141,7 +137,6 @@ renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
  */
 let controlCamera = new PointerLockControls(camera, renderer.domElement);
 const clock = new THREE.Clock();
-// let delta = clock.getDelta;
 
 let button = document.querySelector('#button')
 button.addEventListener('click', () => {
@@ -159,17 +154,16 @@ addEventListener('keyup', (e)=> {
 
 function processKeyboard() {
     let speed = 0.2;
-    // let actualSpeed = speed * delta;
-    if(keyboard['w', 'ArrowUp']) {
+    if(keyboard['w'] || keyboard['ArrowUp']) {
         controlCamera.moveForward(speed);
     }
-    if(keyboard['s', 'ArrowDown']) {
+    if(keyboard['s'] || keyboard['ArrowDown']) {
         controlCamera.moveForward(-speed);
     }
-    if(keyboard['a', 'ArrowRight']) {
+    if(keyboard['a'] || keyboard['ArrowRight']) {
         controlCamera.moveRight(speed);
     }
-    if(keyboard['d', 'ArrowLeft']) {
+    if(keyboard['d'] || keyboard['ArrowLeft']) {
         controlCamera.moveRight(-speed);
     }
 }
