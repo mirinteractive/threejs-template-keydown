@@ -4,6 +4,8 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import * as dat from 'dat.gui'
 import { RectAreaLightHelper } from 'three/examples/jsm/helpers/RectAreaLightHelper.js'
 import { PointerLockControls } from 'three/examples/jsm/controls/PointerLockControls.js'
+import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader.js';
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 
 /**
  * Base
@@ -112,6 +114,8 @@ const cube = new THREE.Mesh(
     new THREE.BoxGeometry(0.75, 0.75, 0.75),
     material
 )
+cube.position.x =- 1.2
+cube.position.z = - 2
 
 const torus = new THREE.Mesh(
     new THREE.TorusGeometry(0.3, 0.2, 32, 64),
@@ -127,6 +131,29 @@ plane.rotation.x = - Math.PI * 0.5
 plane.position.y = - 0.65
 
 scene.add(sphere, cube, torus, plane)
+
+/**
+ * Models
+ */
+//gltf
+const gltfLoader = new GLTFLoader()
+const gltfURL = "/models/gltf/Fox.gltf";
+gltfLoader.load(
+    gltfURL,(gltf) =>
+    {
+        gltf.scene.scale.set(0.015, 0.015, 0.015)
+        scene.add(gltf.scene)
+    }
+)
+
+//fbx
+ let fbxURL = "/models/fbx/test_01.fbx"; //fbx가 있는 파일위치
+ const fbxLoader = new FBXLoader(); // 인스턴스 생성해주고
+//  fbx를 로더해보자
+ fbxLoader.load(fbxURL,function(object){
+          scene.add(object);
+      });
+ 
 
 /**
  * Sizes
