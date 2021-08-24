@@ -4,8 +4,11 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import * as dat from 'dat.gui'
 import { RectAreaLightHelper } from 'three/examples/jsm/helpers/RectAreaLightHelper.js'
 import { PointerLockControls } from 'three/examples/jsm/controls/PointerLockControls.js'
-import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader.js';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
+import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader.js';
+import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader.js';
+import { MTLLoader } from 'three/examples/jsm/loaders/MTLLoader.js';
+
 
 /**
  * Base
@@ -138,22 +141,39 @@ scene.add(sphere, cube, torus, plane)
 //gltf
 const gltfLoader = new GLTFLoader()
 const gltfURL = "/models/gltf/Fox.gltf";
-gltfLoader.load(
-    gltfURL,(gltf) =>
-    {
+gltfLoader.load(gltfURL,(gltf) => {
         gltf.scene.scale.set(0.015, 0.015, 0.015)
         scene.add(gltf.scene)
     }
 )
 
 //fbx
- let fbxURL = "/models/fbx/test_01.fbx"; //fbx가 있는 파일위치
- const fbxLoader = new FBXLoader(); // 인스턴스 생성해주고
-//  fbx를 로더해보자
- fbxLoader.load(fbxURL,function(object){
-          scene.add(object);
-      });
+//  let fbxURL = "/models/fbx/test_01.fbx"; 
+//  const fbxLoader = new FBXLoader(); 
+//  fbxLoader.load(fbxURL,(fbx) => {
+//     scene.add(fbx.scene)
+// }
+// )
+//result: loader에 문제가 있는듯하다
  
+//obj
+const mtlLoader = new MTLLoader();
+const objLoader = new OBJLoader();
+const mtlURL = '/models/obj/exportobj.mtl'
+const objURL = "/models/obj/exportobj.obj";
+mtlLoader.load(mtlURL, (mtl) => {
+    mtl.preload();
+    objLoader.setMaterials(mtl);
+    objLoader.load(objURL,(obj) => {
+        obj.position.y =- 0.8
+        obj.position.x =+ 3
+        obj.rotation.y =+ 10
+        obj.scale.set(0.0015, 0.0015, 0.0015)
+        scene.add(obj)
+        console.log(obj)
+        }
+    )
+})
 
 /**
  * Sizes
