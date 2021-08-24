@@ -23,39 +23,10 @@ const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
 scene.add(ambientLight)
 
 //directional light
-const directionalLight = new THREE.DirectionalLight(0x00fffc, 0.3)
+const directionalLight = new THREE.DirectionalLight(0xffffff, 1)
 //change position of light to right of the center of the scene
 directionalLight.position.set(1, 0.25, 0)
 scene.add(directionalLight)
-
-//hemisphere light
-//onefrombottom,onefromtop, between mix
-const hemisphereLight =new THREE.HemisphereLight(0xff0000, 0x0000ff,0.3)
-scene.add(hemisphereLight) 
-
-//point light
-const pointLight = new THREE.PointLight(0xff9000, 0.5)
-//change position
-pointLight.position.set(1, -0.5, 1)
-scene.add(pointLight)
-
-//rect area light
-//color, intensity, width, height 
-const rectAreaLight = new THREE.RectAreaLight(0x4000ff, 2, 1, 1)
-//change position
-rectAreaLight.position.set(-1.5, 0, 1.5)
-//make light look the center of the scene
-rectAreaLight.lookAt(new THREE.Vector3())
-scene.add(rectAreaLight)
-
-//spot light
-//color, intensity, distance, angle(= smaller darker), penumbra(= dim of edges), decay(=keep 1)
-const spotLight = new THREE.SpotLight(0x78ff00, 0.5, 10, Math.PI*0.1, 0.25, 1)
-spotLight.position.set(0, 2, 3)
-scene.add(spotLight)
-//add target to move around
-spotLight.target.position.set(-1.75, 0, 0)
-scene.add(spotLight.target)
 
 /**
  * Objects
@@ -69,19 +40,19 @@ const sphere = new THREE.Mesh(
     new THREE.SphereGeometry(0.5, 32, 32),
     material
 )
-sphere.position.set(- 1.5, 0, 0)
+sphere.position.set(1.5, 0, 0)
 
 const cube = new THREE.Mesh(
     new THREE.BoxGeometry(0.75, 0.75, 0.75),
     material
 )
-cube.position.set(-1.2, 0, -2)
+cube.position.set(3, 1, -1)
 
 const torus = new THREE.Mesh(
     new THREE.TorusGeometry(0.3, 0.2, 32, 64),
     material
 )
-torus.position.set(1.5, 0, 0) 
+torus.position.set(-1.5, 0, 0) 
 
 const plane = new THREE.Mesh(
     new THREE.PlaneGeometry(50, 50),
