@@ -1,7 +1,5 @@
 import './style.css'
 import * as THREE from 'three'
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
-import { RectAreaLightHelper } from 'three/examples/jsm/helpers/RectAreaLightHelper.js'
 import { PointerLockControls } from 'three/examples/jsm/controls/PointerLockControls.js'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader.js';
@@ -47,7 +45,6 @@ const rectAreaLight = new THREE.RectAreaLight(0x4000ff, 2, 1, 1)
 //change position
 rectAreaLight.position.set(-1.5, 0, 1.5)
 //make light look the center of the scene
-//default Vecter3 = 0,0,0
 rectAreaLight.lookAt(new THREE.Vector3())
 scene.add(rectAreaLight)
 
@@ -59,36 +56,6 @@ scene.add(spotLight)
 //add target to move around
 spotLight.target.position.set(-1.75, 0, 0)
 scene.add(spotLight.target)
-
-/**
- * helpers
- */
-//hemisphereLightHelper
-const hemisphereLightHelper = new THREE.HemisphereLightHelper(hemisphereLight, 0.2)
-scene.add(hemisphereLightHelper)
-
-//directional light helper
-const directionalLightHelper = new THREE.DirectionalLightHelper(directionalLight, 0.2)
-scene.add(directionalLightHelper)
-
-//point light helper
-const pointLightHelper = new THREE.PointLightHelper(pointLight, 0.2)
-scene.add(pointLightHelper)
-
-//spot light helper
-//has no size thow
-const spotLightHelper = new THREE.SpotLightHelper(spotLight)
-scene.add(spotLightHelper)
-//update position
-spotLightHelper.update()
-window.requestAnimationFrame(() => {
-    spotLightHelper.update()
-})
-
-//rect area light helper
-//it is not a part of three.js so we need import it
-const rectAreaLightHelper = new RectAreaLightHelper(rectAreaLight)
-scene.add(rectAreaLightHelper)
 
 /**
  * Objects
@@ -186,8 +153,8 @@ camera.position.set(0, 1, 2)
 scene.add(camera)
 
 // Controls
-const controls = new OrbitControls(camera, canvas)
-controls.enableDamping = true
+// const controls = new OrbitControls(camera, canvas)
+// controls.enableDamping = true
 
 /**
  * Renderer
@@ -255,7 +222,7 @@ const tick = () =>
     torus.rotation.x = 0.15 * elapsedTime
 
     // Update controls
-    controls.update()
+    // controls.update()
 
     // Call tick again on the next frame
     window.requestAnimationFrame(tick)
