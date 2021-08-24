@@ -4,6 +4,11 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import * as dat from 'dat.gui'
 import { RectAreaLightHelper } from 'three/examples/jsm/helpers/RectAreaLightHelper.js'
 import { PointerLockControls } from 'three/examples/jsm/controls/PointerLockControls.js'
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
+import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader.js';
+import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader.js';
+import { MTLLoader } from 'three/examples/jsm/loaders/MTLLoader.js';
+
 
 /**
  * Base
@@ -112,6 +117,8 @@ const cube = new THREE.Mesh(
     new THREE.BoxGeometry(0.75, 0.75, 0.75),
     material
 )
+cube.position.x =- 1.2
+cube.position.z = - 2
 
 const torus = new THREE.Mesh(
     new THREE.TorusGeometry(0.3, 0.2, 32, 64),
@@ -127,6 +134,46 @@ plane.rotation.x = - Math.PI * 0.5
 plane.position.y = - 0.65
 
 scene.add(sphere, cube, torus, plane)
+
+/**
+ * Models
+ */
+//gltf
+const gltfLoader = new GLTFLoader()
+const gltfURL = "/models/gltf/Fox.gltf";
+gltfLoader.load(gltfURL,(gltf) => {
+        gltf.scene.scale.set(0.015, 0.015, 0.015)
+        scene.add(gltf.scene)
+    }
+)
+
+//fbx
+//  let fbxURL = "/models/fbx/test_01.fbx"; 
+//  const fbxLoader = new FBXLoader(); 
+//  fbxLoader.load(fbxURL,(fbx) => {
+//     scene.add(fbx.scene)
+// }
+// )
+//result: loader에 문제가 있는듯하다
+ 
+//obj
+const mtlLoader = new MTLLoader();
+const objLoader = new OBJLoader();
+const mtlURL = '/models/obj/exportobj.mtl'
+const objURL = "/models/obj/exportobj.obj";
+mtlLoader.load(mtlURL, (mtl) => {
+    mtl.preload();
+    objLoader.setMaterials(mtl);
+    objLoader.load(objURL,(obj) => {
+        obj.position.y =- 0.8
+        obj.position.x =+ 3
+        obj.rotation.y =+ 10
+        obj.scale.set(0.0015, 0.0015, 0.0015)
+        scene.add(obj)
+        console.log(obj)
+        }
+    )
+})
 
 /**
  * Sizes
