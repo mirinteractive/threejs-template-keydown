@@ -2,8 +2,7 @@ import './style.css'
 import * as THREE from 'three'
 import { PointerLockControls } from 'three/examples/jsm/controls/PointerLockControls.js'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
-import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader.js';
-import { MTLLoader } from 'three/examples/jsm/loaders/MTLLoader.js';
+import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader.js';
 
 
 /**
@@ -74,23 +73,17 @@ gltfLoader.load(gltfURL,(gltf) => {
         scene.add(gltf.scene)
     }
 )
- 
-//obj
-const mtlLoader = new MTLLoader();
-const objLoader = new OBJLoader();
-const mtlURL = '/models/obj/exportobj.mtl'
-const objURL = "/models/obj/exportobj.obj";
-mtlLoader.load(mtlURL, (mtl) => {
-    mtl.preload();
-    objLoader.setMaterials(mtl);
-    objLoader.load(objURL,(obj) => {
-        obj.position.set(3, -0.8, 0)
-        obj.rotation.set(0, 10, 0)
-        obj.scale.set(0.0015, 0.0015, 0.0015)
-        scene.add(obj)
-        }
-    )
-})
+
+//fbx
+ let fbxURL = "/models/fbx/exportfbx_standard.fbx"; 
+ const fbxLoader = new FBXLoader(); 
+ fbxLoader.load(fbxURL,(fbx) => {
+    fbx.scale.set(0.0015, 0.0015, 0.0015)
+    fbx.position.set(3, -0.8, 0)
+    fbx.rotation.set(0, 10, 0)
+    scene.add(fbx)
+}
+)
 
 /**
  * Sizes
