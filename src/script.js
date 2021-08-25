@@ -1,11 +1,7 @@
 import './style.css'
 import * as THREE from 'three'
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
-import * as dat from 'dat.gui'
-import { RectAreaLightHelper } from 'three/examples/jsm/helpers/RectAreaLightHelper.js'
 import { PointerLockControls } from 'three/examples/jsm/controls/PointerLockControls.js'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
-import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader.js';
 import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader.js';
 import { MTLLoader } from 'three/examples/jsm/loaders/MTLLoader.js';
 
@@ -13,9 +9,6 @@ import { MTLLoader } from 'three/examples/jsm/loaders/MTLLoader.js';
 /**
  * Base
  */
-// Debug
-const gui = new dat.GUI()
-
 // Canvas
 const canvas = document.querySelector('canvas.webgl')
 
@@ -30,74 +23,10 @@ const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
 scene.add(ambientLight)
 
 //directional light
-const directionalLight = new THREE.DirectionalLight(0x00fffc, 0.3)
+const directionalLight = new THREE.DirectionalLight(0xffffff, 1)
 //change position of light to right of the center of the scene
 directionalLight.position.set(1, 0.25, 0)
 scene.add(directionalLight)
-
-//hemisphere light
-//onefrombottom,onefromtop, between mix
-const hemisphereLight =new THREE.HemisphereLight(0xff0000, 0x0000ff,0.3)
-scene.add(hemisphereLight) 
-
-//point light
-const pointLight = new THREE.PointLight(0xff9000, 0.5)
-//change position
-pointLight.position.set(1, -0.5, 1)
-scene.add(pointLight)
-
-//rect area light
-//color, intensity, width, height 
-const rectAreaLight = new THREE.RectAreaLight(0x4000ff, 2, 1, 1)
-//change position
-rectAreaLight.position.set(-1.5, 0, 1.5)
-//make light look the center of the scene
-//default Vecter3 = 0,0,0
-rectAreaLight.lookAt(new THREE.Vector3())
-scene.add(rectAreaLight)
-
-//spot light
-//color, intensity, distance, angle(= smaller darker), penumbra(= dim of edges), decay(=keep 1)
-const spotLight = new THREE.SpotLight(0x78ff00, 0.5, 10, Math.PI*0.1, 0.25, 1)
-spotLight.position.set(0, 2, 3)
-scene.add(spotLight)
-//add target to move around
-spotLight.target.position.x = -1.75
-scene.add(spotLight.target)
-
-
-//debug panel
-gui.add(ambientLight, 'intensity').min(0).max(1).step(0.01)
-
-/**
- * helpers
- */
-//hemisphereLightHelper
-const hemisphereLightHelper = new THREE.HemisphereLightHelper(hemisphereLight, 0.2)
-scene.add(hemisphereLightHelper)
-
-//directional light helper
-const directionalLightHelper = new THREE.DirectionalLightHelper(directionalLight, 0.2)
-scene.add(directionalLightHelper)
-
-//point light helper
-const pointLightHelper = new THREE.PointLightHelper(pointLight, 0.2)
-scene.add(pointLightHelper)
-
-//spot light helper
-//has no size thow
-const spotLightHelper = new THREE.SpotLightHelper(spotLight)
-scene.add(spotLightHelper)
-//update position
-spotLightHelper.update()
-window.requestAnimationFrame(() => {
-    spotLightHelper.update()
-})
-
-//rect area light helper
-//it is not a part of three.js so we need import it
-const rectAreaLightHelper = new RectAreaLightHelper(rectAreaLight)
-scene.add(rectAreaLightHelper)
 
 /**
  * Objects
@@ -111,27 +40,26 @@ const sphere = new THREE.Mesh(
     new THREE.SphereGeometry(0.5, 32, 32),
     material
 )
-sphere.position.x = - 1.5
+sphere.position.set(1.5, 0, 0)
 
 const cube = new THREE.Mesh(
     new THREE.BoxGeometry(0.75, 0.75, 0.75),
     material
 )
-cube.position.x =- 1.2
-cube.position.z = - 2
+cube.position.set(3, 1, -1)
 
 const torus = new THREE.Mesh(
     new THREE.TorusGeometry(0.3, 0.2, 32, 64),
     material
 )
-torus.position.x = 1.5
+torus.position.set(-1.5, 0, 0) 
 
 const plane = new THREE.Mesh(
     new THREE.PlaneGeometry(50, 50),
     material
 )
-plane.rotation.x = - Math.PI * 0.5
-plane.position.y = - 0.65
+plane.rotation.set(- Math.PI * 0.5, 0, 0)
+plane.position.set(0, -0.65, 0)
 
 scene.add(sphere, cube, torus, plane)
 
@@ -146,15 +74,6 @@ gltfLoader.load(gltfURL,(gltf) => {
         scene.add(gltf.scene)
     }
 )
-
-//fbx
-//  let fbxURL = "/models/fbx/test_01.fbx"; 
-//  const fbxLoader = new FBXLoader(); 
-//  fbxLoader.load(fbxURL,(fbx) => {
-//     scene.add(fbx.scene)
-// }
-// )
-//result: loader에 문제가 있는듯하다
  
 //obj
 const mtlLoader = new MTLLoader();
@@ -165,12 +84,10 @@ mtlLoader.load(mtlURL, (mtl) => {
     mtl.preload();
     objLoader.setMaterials(mtl);
     objLoader.load(objURL,(obj) => {
-        obj.position.y =- 0.8
-        obj.position.x =+ 3
-        obj.rotation.y =+ 10
+        obj.position.set(3, -0.8, 0)
+        obj.rotation.set(0, 10, 0)
         obj.scale.set(0.0015, 0.0015, 0.0015)
         scene.add(obj)
-        console.log(obj)
         }
     )
 })
@@ -203,14 +120,8 @@ window.addEventListener('resize', () =>
  */
 // Base camera
 const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height, 0.1, 100)
-// camera.position.x = 1
-camera.position.y = 1
-camera.position.z = 2
+camera.position.set(0, 1, 2)
 scene.add(camera)
-
-// Controls
-const controls = new OrbitControls(camera, canvas)
-controls.enableDamping = true
 
 /**
  * Renderer
@@ -226,7 +137,6 @@ renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
  */
 let controlCamera = new PointerLockControls(camera, renderer.domElement);
 const clock = new THREE.Clock();
-// let delta = clock.getDelta;
 
 let button = document.querySelector('#button')
 button.addEventListener('click', () => {
@@ -244,17 +154,16 @@ addEventListener('keyup', (e)=> {
 
 function processKeyboard() {
     let speed = 0.2;
-    // let actualSpeed = speed * delta;
-    if(keyboard['w', 'ArrowUp']) {
+    if(keyboard['w'] || keyboard['ArrowUp']) {
         controlCamera.moveForward(speed);
     }
-    if(keyboard['s', 'ArrowDown']) {
+    if(keyboard['s'] || keyboard['ArrowDown']) {
         controlCamera.moveForward(-speed);
     }
-    if(keyboard['a', 'ArrowRight']) {
+    if(keyboard['a'] || keyboard['ArrowRight']) {
         controlCamera.moveRight(speed);
     }
-    if(keyboard['d', 'ArrowLeft']) {
+    if(keyboard['d'] || keyboard['ArrowLeft']) {
         controlCamera.moveRight(-speed);
     }
 }
@@ -278,7 +187,7 @@ const tick = () =>
     torus.rotation.x = 0.15 * elapsedTime
 
     // Update controls
-    controls.update()
+    // controls.update()
 
     // Call tick again on the next frame
     window.requestAnimationFrame(tick)
