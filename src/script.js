@@ -3,7 +3,7 @@ import * as THREE from 'three'
 import { PointerLockControls } from 'three/examples/jsm/controls/PointerLockControls.js'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader.js';
-
+import CANNON, { Sphere } from 'cannon';
 
 /**
  * Base
@@ -26,6 +26,32 @@ const directionalLight = new THREE.DirectionalLight(0xffffff, 1)
 //change position of light to right of the center of the scene
 directionalLight.position.set(1, 0.25, 0)
 scene.add(directionalLight)
+
+/**
+ * Physics
+ */
+const world = new CANNON.World();
+world.gravity.set(0, - 9.82, 0)
+const sphereShapoe = new CANNON.Sphere(0.5);
+const sphereBody = new CANNON.Body({
+    mass: 1,
+    //position은 fall and bounce를 위한거여서 collision에서는 삭제해야할지도
+    position: new CANNON.Vec3(1.5, 0, 0),
+    shape: sphereShapoe
+})
+world.addBody(sphereBody)
+const floorShape = new CANNON.Plane()
+const floorBody = new CANNON.Body({
+    mass: 0,
+    shape: floorShape
+})
+//rotation
+floorBody.quaternion.setFromAxisAngle(
+    new CANNON.Vec3(- 1, 0, 0), 
+    Math.PI * 0.5
+) 
+world.addBody(floorBody)
+//floorBody.addShape(floorShape) 형태로 문법을 작성하면 하나의 body에 여러 shape를 추가 할 수 있다.
 
 /**
  * Objects
@@ -70,7 +96,9 @@ const gltfLoader = new GLTFLoader()
 const gltfURL = "/models/gltf/Fox.gltf";
 gltfLoader.load(gltfURL,(gltf) => {
         gltf.scene.scale.set(0.015, 0.015, 0.015)
+        // console.log(gltf.scene.scale);
         scene.add(gltf.scene)
+        //TODO: 여기 안에다가 physical gemometry 생성하기
     }
 )
 
@@ -164,11 +192,23 @@ function processKeyboard() {
 /**
  * Animate
  */
-// const clock = new THREE.Clock()
+//physics: count how much time spent since last tick
+let oldElapsedTime = 0;
 
 const tick = () =>
 {
     const elapsedTime = clock.getElapsedTime()
+    //physice: update time
+    const deltaTime = elapsedTime - oldElapsedTime
+    oldElapsedTime = elapsedTime
+
+    //physics: update physics world
+    //use step function
+    world.step(1/60, deltaTime, 3)
+
+    //physics: link physics and threejs object
+    sphere.position.copy(sphereBody.position)
+    floorBody.position.copy(plane.position)
 
     // Update objects
     sphere.rotation.y = 0.1 * elapsedTime
