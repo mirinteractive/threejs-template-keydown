@@ -14,6 +14,30 @@ const canvas = document.querySelector('canvas.webgl')
 // Scene
 const scene = new THREE.Scene()
 
+
+/**
+ * Sizes
+ */
+ const sizes = {
+    width: window.innerWidth,
+    height: window.innerHeight
+}
+
+window.addEventListener('resize', () =>
+{
+    // Update sizes
+    sizes.width = window.innerWidth
+    sizes.height = window.innerHeight
+
+    // Update camera
+    camera.aspect = sizes.width / sizes.height
+    camera.updateProjectionMatrix()
+
+    // Update renderer
+    renderer.setSize(sizes.width, sizes.height)
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
+})
+
 /**
  * Lights
  */
@@ -28,10 +52,51 @@ directionalLight.position.set(1, 0.25, 0)
 scene.add(directionalLight)
 
 /**
+ * Collision
+ */
+ const world = new CANNON.World();
+ world.gravity.set(0, - 9.82, 0)
+
+const collisioToUpdate = []
+const collisionBox = new THREE.Mesh(
+    new THREE.BoxGeometry(1, 2, 1),
+)
+const createCollision = (width, height, depth, position) =>
+{
+    // Three.js mesh
+    // const mesh = new THREE.Mesh(collisionBox)
+    collisionBox.scale.set(width, height, depth)
+    collisionBox.castShadow = true
+    collisionBox.position.copy(position)
+    scene.add(collisionBox)
+
+    // Cannon.js body
+    const shape = new CANNON.Box(new CANNON.Vec3(width * 0.5, height * 0.5, depth * 0.5))
+
+    const body = new CANNON.Body({
+        mass: 2,
+        position: new CANNON.Vec3(0, 0, 0),
+        shape: shape,
+    })
+    body.position.copy(position)
+    world.addBody(body)
+
+    // Save in objects
+    collisioToUpdate.push({ collisionBox, body })
+}
+
+/**
+ * Camera
+ */
+// Base camera
+const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height, 0.1, 100)
+camera.position.set(0, 1, 2)
+scene.add(camera)
+createCollision(1, 1, 1, { x: 0, y: 0, z: 0 })
+
+/**
  * Physics
  */
-const world = new CANNON.World();
-world.gravity.set(0, - 9.82, 0)
 const sphereShapoe = new CANNON.Sphere(0.5);
 const sphereBody = new CANNON.Body({
     mass: 1,
@@ -88,6 +153,41 @@ plane.position.set(0, -0.65, 0)
 
 scene.add(sphere, cube, torus, plane)
 
+//box adding test
+const objectsToUpdate = []
+const boxGeometry = new THREE.BoxGeometry(1, 1, 1)
+const boxMaterial = new THREE.MeshStandardMaterial({
+    metalness: 0.3,
+    roughness: 0.4,
+    // envMap: environmentMapTexture
+})
+const createBox = (width, height, depth, position) =>
+{
+    // Three.js mesh
+    const mesh = new THREE.Mesh(boxGeometry, boxMaterial)
+    mesh.scale.set(width, height, depth)
+    mesh.castShadow = true
+    mesh.position.copy(position)
+    scene.add(mesh)
+
+    // Cannon.js body
+    const shape = new CANNON.Box(new CANNON.Vec3(width * 0.5, height * 0.5, depth * 0.5))
+
+    const body = new CANNON.Body({
+        mass: 0,
+        position: new CANNON.Vec3(1, 4, 2),
+        shape: shape,
+        // material: defaultMaterial
+    })
+    body.position.copy(position)
+    world.addBody(body)
+
+    // Save in objects
+    objectsToUpdate.push({ mesh, body })
+}
+createBox(1, 3, 2, { x: 5, y: 0, z: 0 })
+
+
 /**
  * Models
  */
@@ -112,37 +212,6 @@ gltfLoader.load(gltfURL,(gltf) => {
     scene.add(fbx)
 }
 )
-
-/**
- * Sizes
- */
-const sizes = {
-    width: window.innerWidth,
-    height: window.innerHeight
-}
-
-window.addEventListener('resize', () =>
-{
-    // Update sizes
-    sizes.width = window.innerWidth
-    sizes.height = window.innerHeight
-
-    // Update camera
-    camera.aspect = sizes.width / sizes.height
-    camera.updateProjectionMatrix()
-
-    // Update renderer
-    renderer.setSize(sizes.width, sizes.height)
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
-})
-
-/**
- * Camera
- */
-// Base camera
-const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height, 0.1, 100)
-camera.position.set(0, 1, 2)
-scene.add(camera)
 
 /**
  * Renderer
@@ -188,6 +257,7 @@ function processKeyboard() {
         controlCamera.moveRight(-speed);
     }
 }
+// console.log(controlCamera);
 
 /**
  * Animate
@@ -209,6 +279,14 @@ const tick = () =>
     //physics: link physics and threejs object
     sphere.position.copy(sphereBody.position)
     floorBody.position.copy(plane.position)
+    // collisionBox.position.copy(camera.position)
+    // collisionBox.position.x = camera.position.x-3
+    // console.log(createCollision);
+    for(const object of collisioToUpdate){
+        // object.collisionBox.position.copy(object.body.position)
+        object.body.position.copy(camera.position)
+        // object.collisionBox.quaternion.copy(object.body.quaternion)
+    }
 
     // Update objects
     sphere.rotation.y = 0.1 * elapsedTime
