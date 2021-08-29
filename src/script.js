@@ -314,7 +314,7 @@ const tick = () =>
     cube.rotation.y = 0.1 * elapsedTime
     torus.rotation.y = 0.1 * elapsedTime
 
-    cube.rotation.x = 0.15 * elapsedTime
+    cube.rotation.x = 0.15 * elapsedTime 
     torus.rotation.x = 0.15 * elapsedTime
 
     // Call tick again on the next frame
