@@ -3,7 +3,7 @@ import * as THREE from 'three'
 import { PointerLockControls } from 'three/examples/jsm/controls/PointerLockControls.js'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader.js';
-import CANNON, { Sphere } from 'cannon';
+import CANNON from 'cannon';
 
 /**
  * Base
@@ -13,7 +13,6 @@ const canvas = document.querySelector('canvas.webgl')
 
 // Scene
 const scene = new THREE.Scene()
-
 
 /**
  * Sizes
@@ -59,8 +58,9 @@ scene.add(directionalLight)
 
 const collisioToUpdate = []
 const collisionBox = new THREE.Mesh(
-    new THREE.BoxGeometry(1, 2, 1),
+    new THREE.BoxGeometry(1, 1, 1)
 )
+
 const createCollision = (width, height, depth, position) =>
 {
     // Three.js mesh
@@ -92,17 +92,17 @@ const createCollision = (width, height, depth, position) =>
 const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height, 0.1, 100)
 camera.position.set(0, 1, 2)
 scene.add(camera)
-createCollision(1, 1, 1, { x: 0, y: 0, z: 0 })
+createCollision(1, 2, 1, { x: 0, y: 0, z: 0 })
 
 /**
  * Physics
  */
-const sphereShapoe = new CANNON.Sphere(0.5);
+const sphereShape = new CANNON.Sphere(0.5);
 const sphereBody = new CANNON.Body({
     mass: 1,
     //position은 fall and bounce를 위한거여서 collision에서는 삭제해야할지도
     position: new CANNON.Vec3(1.5, 0, 0),
-    shape: sphereShapoe
+    shape: sphereShape
 })
 world.addBody(sphereBody)
 const floorShape = new CANNON.Plane()
@@ -110,7 +110,7 @@ const floorBody = new CANNON.Body({
     mass: 0,
     shape: floorShape
 })
-//rotation
+//floor rotation
 floorBody.quaternion.setFromAxisAngle(
     new CANNON.Vec3(- 1, 0, 0), 
     Math.PI * 0.5
@@ -134,13 +134,18 @@ sphere.position.set(1.5, 0, 0)
 
 const cube = new THREE.Mesh(
     new THREE.BoxGeometry(0.75, 0.75, 0.75),
-    material
+    
 )
 cube.position.set(3, 1, -1)
 
+const cubeTest = new THREE.Mesh(
+    new THREE.BoxGeometry(1, 2, 1),
+)
+cubeTest.position.set(-3, 0, 0)
+
 const torus = new THREE.Mesh(
     new THREE.TorusGeometry(0.3, 0.2, 32, 64),
-    material
+    
 )
 torus.position.set(-1.5, 0, 0) 
 
@@ -151,20 +156,15 @@ const plane = new THREE.Mesh(
 plane.rotation.set(- Math.PI * 0.5, 0, 0)
 plane.position.set(0, -0.65, 0)
 
-scene.add(sphere, cube, torus, plane)
+scene.add(sphere, cube, torus, plane, cubeTest)
 
 //box adding test
 const objectsToUpdate = []
 const boxGeometry = new THREE.BoxGeometry(1, 1, 1)
-const boxMaterial = new THREE.MeshStandardMaterial({
-    metalness: 0.3,
-    roughness: 0.4,
-    // envMap: environmentMapTexture
-})
 const createBox = (width, height, depth, position) =>
 {
     // Three.js mesh
-    const mesh = new THREE.Mesh(boxGeometry, boxMaterial)
+    const mesh = new THREE.Mesh(boxGeometry)
     mesh.scale.set(width, height, depth)
     mesh.castShadow = true
     mesh.position.copy(position)
@@ -185,8 +185,7 @@ const createBox = (width, height, depth, position) =>
     // Save in objects
     objectsToUpdate.push({ mesh, body })
 }
-createBox(1, 3, 2, { x: 5, y: 0, z: 0 })
-
+createBox(1, 4, 2, { x: 5, y: 0, z: 0 })
 
 /**
  * Models
@@ -257,7 +256,6 @@ function processKeyboard() {
         controlCamera.moveRight(-speed);
     }
 }
-// console.log(controlCamera);
 
 /**
  * Animate
@@ -280,25 +278,44 @@ const tick = () =>
     sphere.position.copy(sphereBody.position)
     floorBody.position.copy(plane.position)
     // collisionBox.position.copy(camera.position)
-    // collisionBox.position.x = camera.position.x-3
-    // console.log(createCollision);
+    //test below
     for(const object of collisioToUpdate){
-        // object.collisionBox.position.copy(object.body.position)
-        object.body.position.copy(camera.position)
-        // object.collisionBox.quaternion.copy(object.body.quaternion)
+        // object.collisionBox.position.copy(camera.position)
+        object.collisionBox.position.x = camera.position.x-3
+        object.collisionBox.position.z = camera.position.z-5
+        object.body.position.copy(object.collisionBox.position)
+    }
+
+    /**
+     * Raycaster
+     */
+    const testX = camera.position.x-3
+    const testZ = camera.position.z-5
+    const rayOrigin = new THREE.Vector3(testX, 0, testZ)
+    const raycaster = new THREE.Raycaster()
+    const rayDirection = new THREE.Vector3(10,10,10)
+    rayDirection.normalize()
+    raycaster.set(rayOrigin, rayDirection)
+    
+    const objectsToTest = [torus, cube, cubeTest]
+    const intersects = raycaster.intersectObjects(objectsToTest)
+    for(const object of objectsToTest)
+    {
+        object.material.color.set('#ff0000')
+    }
+
+    for(const intersect of intersects)
+    {
+        intersect.object.material.color.set('#0000ff')
+        console.log('8D');
     }
 
     // Update objects
-    sphere.rotation.y = 0.1 * elapsedTime
     cube.rotation.y = 0.1 * elapsedTime
     torus.rotation.y = 0.1 * elapsedTime
 
-    sphere.rotation.x = 0.15 * elapsedTime
     cube.rotation.x = 0.15 * elapsedTime
     torus.rotation.x = 0.15 * elapsedTime
-
-    // Update controls
-    // controls.update()
 
     // Call tick again on the next frame
     window.requestAnimationFrame(tick)
