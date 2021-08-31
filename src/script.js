@@ -8,11 +8,8 @@ import CANNON from 'cannon';
 /**
  * Base
  */
-// Canvas
-const canvas = document.querySelector('canvas.webgl')
-
-// Scene
-const scene = new THREE.Scene()
+const canvas = document.querySelector('canvas.webgl');
+const scene = new THREE.Scene();
 
 /**
  * Sizes
@@ -46,35 +43,32 @@ scene.add(ambientLight)
 
 //directional light
 const directionalLight = new THREE.DirectionalLight(0xffffff, 1)
-//change position of light to right of the center of the scene
 directionalLight.position.set(1, 0.25, 0)
 scene.add(directionalLight)
 
 /**
- * Collision
+ * Physics
  */
  const world = new CANNON.World();
- world.gravity.set(0, - 9.82, 0)
+ world.gravity.set(0, - 9.82, 0);
+ const floorMass = 0;
+ const objectMass = 1;
+ const cameraMass = 2;
 
 const collisioToUpdate = []
-const collisionBox = new THREE.Mesh(
-    new THREE.BoxGeometry(1, 1, 1)
-)
-
+const collisionBox = new THREE.Mesh(new THREE.BoxGeometry(1, 1, 1))
 const createCollision = (width, height, depth, position) =>
 {
     // Three.js mesh
-    // const mesh = new THREE.Mesh(collisionBox)
     collisionBox.scale.set(width, height, depth)
     collisionBox.castShadow = true
     collisionBox.position.copy(position)
     scene.add(collisionBox)
 
-    // Cannon.js body
     const shape = new CANNON.Box(new CANNON.Vec3(width * 0.5, height * 0.5, depth * 0.5))
 
     const body = new CANNON.Body({
-        mass: 2,
+        mass: cameraMass,
         position: new CANNON.Vec3(0, 0, 0),
         shape: shape,
     })
@@ -95,68 +89,66 @@ scene.add(camera)
 createCollision(1, 2, 1, { x: 0, y: 0, z: 0 })
 
 /**
- * Physics
- */
-const sphereShape = new CANNON.Sphere(0.5);
-const sphereBody = new CANNON.Body({
-    mass: 1,
-    //position은 fall and bounce를 위한거여서 collision에서는 삭제해야할지도
-    position: new CANNON.Vec3(1.5, 0, 0),
-    shape: sphereShape
-})
-world.addBody(sphereBody)
-const floorShape = new CANNON.Plane()
-const floorBody = new CANNON.Body({
-    mass: 0,
-    shape: floorShape
-})
-//floor rotation
-floorBody.quaternion.setFromAxisAngle(
-    new CANNON.Vec3(- 1, 0, 0), 
-    Math.PI * 0.5
-) 
-world.addBody(floorBody)
-//floorBody.addShape(floorShape) 형태로 문법을 작성하면 하나의 body에 여러 shape를 추가 할 수 있다.
-
-/**
  * Objects
  */
-// Material
-const material = new THREE.MeshStandardMaterial()
-material.roughness = 0.4
+const material = new THREE.MeshStandardMaterial({
+    roughness: 0.4
+})
 
-// Objects
+//sphere
 const sphere = new THREE.Mesh(
     new THREE.SphereGeometry(0.5, 32, 32),
     material
 )
 sphere.position.set(1.5, 0, 0)
+const sphereShape = new CANNON.Sphere(0.5);
+const sphereBody = new CANNON.Body({
+    mass: objectMass,
+    position: sphere.position,
+    shape: sphereShape
+})
 
+//cube
 const cube = new THREE.Mesh(
     new THREE.BoxGeometry(0.75, 0.75, 0.75),
     
 )
 cube.position.set(3, 1, -1)
 
+//cubeTest
 const cubeTest = new THREE.Mesh(
     new THREE.BoxGeometry(1, 2, 1),
 )
 cubeTest.position.set(-3, 0, 0)
 
+//torus
 const torus = new THREE.Mesh(
     new THREE.TorusGeometry(0.3, 0.2, 32, 64),
     
 )
 torus.position.set(-1.5, 0, 0) 
 
+//floor
 const plane = new THREE.Mesh(
     new THREE.PlaneGeometry(50, 50),
     material
 )
 plane.rotation.set(- Math.PI * 0.5, 0, 0)
 plane.position.set(0, -0.65, 0)
+const floorShape = new CANNON.Plane()
+const floorBody = new CANNON.Body({
+    mass: floorMass,
+    shape: floorShape
+})
+floorBody.quaternion.setFromAxisAngle(
+    new CANNON.Vec3(- 1, 0, 0), 
+    Math.PI * 0.5
+) 
+//floorBody.addShape(floorShape) 형태로 문법을 작성하면 하나의 body에 여러 shape를 추가 할 수 있다.
 
 scene.add(sphere, cube, torus, plane, cubeTest)
+world.addBody(sphereBody)
+world.addBody(floorBody)
 
 //box adding test
 const objectsToUpdate = []
@@ -206,8 +198,8 @@ gltfLoader.load(gltfURL,(gltf) => {
  const fbxLoader = new FBXLoader(); 
  fbxLoader.load(fbxURL,(fbx) => {
     fbx.scale.set(0.0015, 0.0015, 0.0015)
-    fbx.position.set(3, -0.8, 0)
-    fbx.rotation.set(0, 10, 0)
+    fbx.position.set(20, 0, 0)
+    fbx.rotation.set(0, Math.PI*0.5, 0)
     scene.add(fbx)
 }
 )
