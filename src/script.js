@@ -249,11 +249,33 @@ function processKeyboard() {
     if(keyboard['s'] || keyboard['ArrowDown']) {
         controlCamera.moveForward(-speed);
     }
-    if(keyboard['a'] || keyboard['ArrowRight']) {
+    if(keyboard['d'] || keyboard['ArrowRight']) {
         controlCamera.moveRight(speed);
     }
-    if(keyboard['d'] || keyboard['ArrowLeft']) {
+    if(keyboard['a'] || keyboard['ArrowLeft']) {
         controlCamera.moveRight(-speed);
+    }
+}
+
+/**
+* Camera Raycaster
+*/
+function processKeyboardRaycaster() {
+    if(keyboard['w'] || keyboard['ArrowUp']) {
+        camera.position.x =+10
+        // console.log(keyboard);
+    }
+    if(keyboard['s'] || keyboard['ArrowDown']) {
+        camera.position.x =+10
+        // console.log('down');
+    }
+    if(keyboard['d'] || keyboard['ArrowRight']) {
+        camera.position.z =-10
+        // console.log('right');
+    }
+    if(keyboard['a'] || keyboard['ArrowLeft']) {
+        camera.position.z =+10
+        // console.log('left');
     }
 }
 
@@ -307,8 +329,9 @@ const tick = () =>
     for(const intersect of intersects)
     {
         intersect.object.material.color.set('#0000ff')
-        console.log('8D');
+        processKeyboardRaycaster()
     }
+    // console.log(camera.position);
 
     // Update objects
     cube.rotation.y = 0.1 * elapsedTime
