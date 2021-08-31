@@ -262,20 +262,20 @@ function processKeyboard() {
 */
 function processKeyboardRaycaster() {
     if(keyboard['w'] || keyboard['ArrowUp']) {
-        camera.position.x =+10
-        // console.log(keyboard);
+        camera.position.x =+1
+        console.log('up');
     }
     if(keyboard['s'] || keyboard['ArrowDown']) {
-        camera.position.x =+10
-        // console.log('down');
+        camera.position.x =-1
+        console.log('down');
     }
     if(keyboard['d'] || keyboard['ArrowRight']) {
-        camera.position.z =-10
-        // console.log('right');
+        camera.position.z =-1
+        console.log('right');
     }
     if(keyboard['a'] || keyboard['ArrowLeft']) {
-        camera.position.z =+10
-        // console.log('left');
+        camera.position.z =+1
+        console.log('left');
     }
 }
 
