@@ -55,11 +55,14 @@ scene.add(directionalLight)
  const objectMass = 1;
  const cameraMass = 2;
 
-const collisioToUpdate = []
+ /**
+ * Collision
+ */
+//camera
+const cameraCollision = []
 const collisionBox = new THREE.Mesh(new THREE.BoxGeometry(1, 1, 1))
-const createCollision = (width, height, depth, position) =>
+const collisionName = (width, height, depth, position) =>
 {
-    // Three.js mesh
     collisionBox.scale.set(width, height, depth)
     collisionBox.castShadow = true
     collisionBox.position.copy(position)
@@ -75,9 +78,41 @@ const createCollision = (width, height, depth, position) =>
     body.position.copy(position)
     world.addBody(body)
 
-    // Save in objects
-    collisioToUpdate.push({ collisionBox, body })
+    cameraCollision.push({ collisionBox, body })
 }
+
+//object: box
+function objectColisionBox(container, width, height, depth, positionX, positionY, positionZ) {
+    this.container = container,
+    this.width = width,
+    this.height = height,
+    this.depth = depth,
+    this.positionX = positionX,
+    this.positionY = positionY,
+    this.positionZ = positionZ
+
+    this.createBox = function createBox() {
+        collisionBox.scale.set(this.width, this.height, this.depth)
+        collisionBox.castShadow = true
+        collisionBox.position.set(this.positionX, this.positionY, this.positionZ)
+        scene.add(collisionBox)
+
+        const shape = new CANNON.Box(new CANNON.Vec3(this.width * 0.5, this.height * 0.5, this.depth * 0.5))
+        const body = new CANNON.Body({
+            mass: objectMass,
+            position: new CANNON.Vec3(this.positionX, this.positionY, this.positionZ),
+            shape: shape,
+        })
+        body.position.copy(collisionBox.position)
+        world.addBody(body)
+
+        this.container.push({ collisionBox, body })
+    }
+}
+
+const testCollisionContainer = []
+const testCube = new objectColisionBox(testCollisionContainer, 0.75, 0.75, 0.75, -1, 1, 1)
+testCube.createBox()
 
 /**
  * Camera
@@ -86,6 +121,7 @@ const createCollision = (width, height, depth, position) =>
 const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height, 0.1, 100)
 camera.position.set(0, 1, 2)
 scene.add(camera)
+const createCollision = collisionName
 createCollision(1, 2, 1, { x: 0, y: 0, z: 0 })
 
 /**
@@ -109,6 +145,7 @@ const sphereBody = new CANNON.Body({
 })
 
 //cube
+
 const cube = new THREE.Mesh(
     new THREE.BoxGeometry(0.75, 0.75, 0.75),
     
@@ -120,6 +157,7 @@ const cubeTest = new THREE.Mesh(
     new THREE.BoxGeometry(1, 2, 1),
 )
 cubeTest.position.set(-3, 0, 0)
+
 
 //torus
 const torus = new THREE.Mesh(
@@ -291,14 +329,15 @@ const tick = () =>
     //physics: link physics and threejs object
     sphere.position.copy(sphereBody.position)
     floorBody.position.copy(plane.position)
-    // collisionBox.position.copy(camera.position)
     //test below
-    for(const object of collisioToUpdate){
+    for(const object of cameraCollision){
         // object.collisionBox.position.copy(camera.position)
         object.collisionBox.position.x = camera.position.x-3
         object.collisionBox.position.z = camera.position.z-5
         object.body.position.copy(object.collisionBox.position)
     }
+
+    // console.log(testCube);
 
     /**
      * Raycaster
