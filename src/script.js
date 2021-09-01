@@ -91,12 +91,6 @@ const cameraCollisionBox = (width, height, depth, position) =>
 function objectColisionBox(container, box) {
     this.container = container,
     this.box = box,
-    // this.width = width,
-    // this.height = height,
-    // this.depth = depth,
-    // this.positionX = positionX,
-    // this.positionY = positionY,
-    // this.positionZ = positionZ
 
     this.createBox = function createBox() {
         scene.add(box)
@@ -108,6 +102,7 @@ function objectColisionBox(container, box) {
             ))
         const body = new CANNON.Body({
             mass: objectMass,
+            position: new CANNON.Vec3(0, 0, 0),
             shape: shape,
         })
         body.position.copy(box.position)
