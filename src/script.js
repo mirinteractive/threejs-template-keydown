@@ -60,8 +60,14 @@ scene.add(directionalLight)
  */
 //camera
 const cameraCollision = []
-const collisionBox = new THREE.Mesh(new THREE.BoxGeometry(1, 1, 1))
-const collisionName = (width, height, depth, position) =>
+const collisionBox = new THREE.Mesh(
+    new THREE.BoxGeometry(1, 1, 1),
+    new THREE.MeshStandardMaterial({
+        color: '#458625',
+    })
+)
+scene.add(collisionBox)
+const cameraCollisionBox = (width, height, depth, position) =>
 {
     collisionBox.scale.set(width, height, depth)
     collisionBox.castShadow = true
@@ -82,37 +88,34 @@ const collisionName = (width, height, depth, position) =>
 }
 
 //object: box
-function objectColisionBox(container, width, height, depth, positionX, positionY, positionZ) {
+function objectColisionBox(container, box) {
     this.container = container,
-    this.width = width,
-    this.height = height,
-    this.depth = depth,
-    this.positionX = positionX,
-    this.positionY = positionY,
-    this.positionZ = positionZ
+    this.box = box,
+    // this.width = width,
+    // this.height = height,
+    // this.depth = depth,
+    // this.positionX = positionX,
+    // this.positionY = positionY,
+    // this.positionZ = positionZ
 
     this.createBox = function createBox() {
-        collisionBox.scale.set(this.width, this.height, this.depth)
-        collisionBox.castShadow = true
-        collisionBox.position.set(this.positionX, this.positionY, this.positionZ)
-        scene.add(collisionBox)
+        scene.add(box)
 
-        const shape = new CANNON.Box(new CANNON.Vec3(this.width * 0.5, this.height * 0.5, this.depth * 0.5))
+        const shape = new CANNON.Box(new CANNON.Vec3(
+            this.box.scale.x * 0.5, 
+            this.box.scale.y * 0.5, 
+            this.box.scale.z * 0.5
+            ))
         const body = new CANNON.Body({
             mass: objectMass,
-            position: new CANNON.Vec3(this.positionX, this.positionY, this.positionZ),
             shape: shape,
         })
-        body.position.copy(collisionBox.position)
+        body.position.copy(box.position)
         world.addBody(body)
 
-        this.container.push({ collisionBox, body })
+        this.container.push({ box, body })
     }
 }
-
-const testCollisionContainer = []
-const testCube = new objectColisionBox(testCollisionContainer, 0.75, 0.75, 0.75, -1, 1, 1)
-testCube.createBox()
 
 /**
  * Camera
@@ -121,8 +124,7 @@ testCube.createBox()
 const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height, 0.1, 100)
 camera.position.set(0, 1, 2)
 scene.add(camera)
-const createCollision = collisionName
-createCollision(1, 2, 1, { x: 0, y: 0, z: 0 })
+cameraCollisionBox(1, 2, 1, { x: 0, y: 0, z: 0 })
 
 /**
  * Objects
@@ -145,12 +147,21 @@ const sphereBody = new CANNON.Body({
 })
 
 //cube
-
 const cube = new THREE.Mesh(
     new THREE.BoxGeometry(0.75, 0.75, 0.75),
     
 )
 cube.position.set(3, 1, -1)
+
+const cube2 = new THREE.Mesh(
+    new THREE.BoxGeometry(1, 3, 1),
+    
+)
+cube2.position.set(1, 0, 1)
+const cube2Container = []
+const testCube = new objectColisionBox(cube2Container, cube2)
+
+testCube.createBox()
 
 //cubeTest
 const cubeTest = new THREE.Mesh(
@@ -317,19 +328,13 @@ let oldElapsedTime = 0;
 
 const tick = () =>
 {
+    //time
     const elapsedTime = clock.getElapsedTime()
-    //physice: update time
     const deltaTime = elapsedTime - oldElapsedTime
     oldElapsedTime = elapsedTime
-
-    //physics: update physics world
-    //use step function
     world.step(1/60, deltaTime, 3)
 
-    //physics: link physics and threejs object
-    sphere.position.copy(sphereBody.position)
-    floorBody.position.copy(plane.position)
-    //test below
+    //camera
     for(const object of cameraCollision){
         // object.collisionBox.position.copy(camera.position)
         object.collisionBox.position.x = camera.position.x-3
@@ -337,7 +342,9 @@ const tick = () =>
         object.body.position.copy(object.collisionBox.position)
     }
 
-    // console.log(testCube);
+    //objects
+    sphere.position.copy(sphereBody.position)
+    floorBody.position.copy(plane.position)
 
     /**
      * Raycaster
