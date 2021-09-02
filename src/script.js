@@ -169,25 +169,25 @@ world.addBody(floorBody)
 scene.add(floor)
 
 const wallFront = new THREE.Mesh(new THREE.BoxGeometry(50, 10, 1))
-wallFront.position.set(0, 0, -10)
+wallFront.position.set(0, 0, -20)
 const wallFrontContainer = []
 const wallFrontCollision = new objectColisionBox(wallFrontContainer, wallFront, floorMass)
 wallFrontCollision.createBox()
 
 const wallBack = new THREE.Mesh(new THREE.BoxGeometry(50, 10, 1))
-wallBack.position.set(0, 0, 10)
+wallBack.position.set(0, 0, 20)
 const wallBackContainer = []
 const wallBackCollision = new objectColisionBox(wallBackContainer, wallBack, floorMass)
 wallBackCollision.createBox()
 
 const wallRight = new THREE.Mesh(new THREE.BoxGeometry(1, 10, 50))
-wallRight.position.set(10, 0, 0)
+wallRight.position.set(20, 0, 0)
 const wallRightContainer = []
 const wallRightCollision = new objectColisionBox(wallRightContainer, wallRight, floorMass)
 wallRightCollision.createBox()
 
 const wallLeft = new THREE.Mesh(new THREE.BoxGeometry(1, 10, 50))
-wallLeft.position.set(-10, 0, 0)
+wallLeft.position.set(-20, 0, 0)
 const wallLeftContainer = []
 const wallLeftCollision = new objectColisionBox(wallLeftContainer, wallLeft, floorMass)
 wallLeftCollision.createBox()
@@ -303,16 +303,20 @@ function processKeyboard() {
 */
 function processKeyboardRaycaster() {
     if(keyboard['w'] || keyboard['ArrowUp']) {
-        camera.position.z =+1
+        camera.position.z =+0.2
+        camera.position.x =+0.2
     }
     if(keyboard['s'] || keyboard['ArrowDown']) {
-        camera.position.z =-1
+        camera.position.x =-0.2
+        camera.position.z =-0.2
     }
     if(keyboard['d'] || keyboard['ArrowRight']) {
-        camera.position.x =-1
+        camera.position.x =-0.2
+        camera.position.z =-0.2
     }
     if(keyboard['a'] || keyboard['ArrowLeft']) {
-        camera.position.x =+1
+        camera.position.x =+0.2
+        camera.position.z =+0.2
     }
 }
 
@@ -332,9 +336,7 @@ const tick = () =>
 
     //camera
     for(const object of cameraCollision){
-        // object.collisionBox.position.copy(camera.position)
-        object.collisionBox.position.x = camera.position.x-3
-        object.collisionBox.position.z = camera.position.z-5
+        object.collisionBox.position.copy(camera.position)
         object.body.position.copy(object.collisionBox.position)
     }
 
@@ -351,15 +353,15 @@ const tick = () =>
     /**
      * Raycaster
      */
-    const testX = camera.position.x-3
-    const testZ = camera.position.z-5
-    const rayOrigin = new THREE.Vector3(testX, 0, testZ)
+    const cameraX = camera.position.x
+    const cameraZ = camera.position.z
+    const rayOrigin = new THREE.Vector3(cameraX, 0, cameraZ)
     const raycaster = new THREE.Raycaster()
     const rayDirection = new THREE.Vector3(10,10,10)
     rayDirection.normalize()
     raycaster.set(rayOrigin, rayDirection)
     
-    const objectsToTest = [torus, cube, cubeTest, wallFront, wallBack, wallRight, wallLeft]
+    const objectsToTest = [wallFront, wallBack, wallRight, wallLeft]
     const intersects = raycaster.intersectObjects(objectsToTest)
     for(const object of objectsToTest){
         object.material.color.set('#88B7B5')
