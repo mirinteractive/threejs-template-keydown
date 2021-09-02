@@ -63,7 +63,7 @@ const cameraCollision = []
 const collisionBox = new THREE.Mesh(
     new THREE.BoxGeometry(1, 1, 1),
     new THREE.MeshStandardMaterial({
-        color: '#458625',
+        color: '#847996',
     })
 )
 scene.add(collisionBox)
@@ -88,27 +88,47 @@ const cameraCollisionBox = (width, height, depth, position) =>
 }
 
 //object: box
-function objectColisionBox(container, box) {
+function objectColisionBox(container, box, mass) {
     this.container = container,
     this.box = box,
+    this.mass = mass,
 
     this.createBox = function createBox() {
-        scene.add(box)
-
         const shape = new CANNON.Box(new CANNON.Vec3(
             this.box.scale.x * 0.5, 
             this.box.scale.y * 0.5, 
             this.box.scale.z * 0.5
             ))
         const body = new CANNON.Body({
-            mass: objectMass,
+            mass: this.mass,
             position: new CANNON.Vec3(0, 0, 0),
             shape: shape,
         })
         body.position.copy(box.position)
+        scene.add(box)
         world.addBody(body)
 
         this.container.push({ box, body })
+    }
+}
+//object: sphere
+function objectColisionSphere(container, sphere, mass) {
+    this.container = container,
+    this.sphere = sphere,
+    this.mass = mass,
+
+    this.createSphere = function createSphere() {
+        const shape = new CANNON.Sphere(this.sphere.scale.x * 0.5)
+        const body = new CANNON.Body({
+            mass: this.mass,
+            position: new CANNON.Vec3(0, 0, 0),
+            shape: shape,
+        })
+        body.position.copy(sphere.position)
+        scene.add(sphere)
+        world.addBody(body)
+
+        this.container.push({ sphere, body })
     }
 }
 
@@ -117,68 +137,25 @@ function objectColisionBox(container, box) {
  */
 // Base camera
 const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height, 0.1, 100)
+//camera collision test
 camera.position.set(0, 1, 2)
+//object rendering
+// camera.position.set(15, 1, 0)
 scene.add(camera)
 cameraCollisionBox(1, 2, 1, { x: 0, y: 0, z: 0 })
 
 /**
  * Objects
  */
-const material = new THREE.MeshStandardMaterial({
-    roughness: 0.4
-})
-
-//sphere
-const sphere = new THREE.Mesh(
-    new THREE.SphereGeometry(0.5, 32, 32),
-    material
-)
-sphere.position.set(1.5, 0, 0)
-const sphereShape = new CANNON.Sphere(0.5);
-const sphereBody = new CANNON.Body({
-    mass: objectMass,
-    position: sphere.position,
-    shape: sphereShape
-})
-
-//cube
-const cube = new THREE.Mesh(
-    new THREE.BoxGeometry(0.75, 0.75, 0.75),
-    
-)
-cube.position.set(3, 1, -1)
-
-const cube2 = new THREE.Mesh(
-    new THREE.BoxGeometry(1, 3, 1),
-    
-)
-cube2.position.set(1, 0, 1)
-const cube2Container = []
-const testCube = new objectColisionBox(cube2Container, cube2)
-
-testCube.createBox()
-
-//cubeTest
-const cubeTest = new THREE.Mesh(
-    new THREE.BoxGeometry(1, 2, 1),
-)
-cubeTest.position.set(-3, 0, 0)
-
-
-//torus
-const torus = new THREE.Mesh(
-    new THREE.TorusGeometry(0.3, 0.2, 32, 64),
-    
-)
-torus.position.set(-1.5, 0, 0) 
-
 //floor
-const plane = new THREE.Mesh(
-    new THREE.PlaneGeometry(50, 50),
-    material
-)
-plane.rotation.set(- Math.PI * 0.5, 0, 0)
-plane.position.set(0, -0.65, 0)
+const floorMaterial = new THREE.MeshStandardMaterial({
+    roughness: 0.4,
+    color: '#F4ECD6', 
+})
+
+const floor = new THREE.Mesh(new THREE.PlaneGeometry(50, 50),floorMaterial)
+floor.rotation.set(-Math.PI*0.5, 0, 0)
+floor.position.set(0, -0.65, 0)
 const floorShape = new CANNON.Plane()
 const floorBody = new CANNON.Body({
     mass: floorMass,
@@ -188,40 +165,67 @@ floorBody.quaternion.setFromAxisAngle(
     new CANNON.Vec3(- 1, 0, 0), 
     Math.PI * 0.5
 ) 
-//floorBody.addShape(floorShape) 형태로 문법을 작성하면 하나의 body에 여러 shape를 추가 할 수 있다.
-
-scene.add(sphere, cube, torus, plane, cubeTest)
-world.addBody(sphereBody)
 world.addBody(floorBody)
+scene.add(floor)
 
-//box adding test
+const wallFront = new THREE.Mesh(new THREE.BoxGeometry(50, 10, 1))
+wallFront.position.set(0, 0, -10)
+const wallFrontContainer = []
+const wallFrontCollision = new objectColisionBox(wallFrontContainer, wallFront, floorMass)
+wallFrontCollision.createBox()
+
+const wallBack = new THREE.Mesh(new THREE.BoxGeometry(50, 10, 1))
+wallBack.position.set(0, 0, 10)
+const wallBackContainer = []
+const wallBackCollision = new objectColisionBox(wallBackContainer, wallBack, floorMass)
+wallBackCollision.createBox()
+
+const wallRight = new THREE.Mesh(new THREE.BoxGeometry(1, 10, 50))
+wallRight.position.set(10, 0, 0)
+const wallRightContainer = []
+const wallRightCollision = new objectColisionBox(wallRightContainer, wallRight, floorMass)
+wallRightCollision.createBox()
+
+const wallLeft = new THREE.Mesh(new THREE.BoxGeometry(1, 10, 50))
+wallLeft.position.set(-10, 0, 0)
+const wallLeftContainer = []
+const wallLeftCollision = new objectColisionBox(wallLeftContainer, wallLeft, floorMass)
+wallLeftCollision.createBox()
+
+//objects
+const objectMaterial = new THREE.MeshStandardMaterial({
+    roughness: 0.4,
+    color: '#88B7B5', 
+})
+
+const sphereBall = new THREE.Mesh(new THREE.SphereGeometry(0.5, 32, 32), objectMaterial)
+sphereBall.position.set(1.5, 0, 0)
+const sphereBallContainer = []
+const sphereBallCollision = new objectColisionSphere(sphereBallContainer, sphereBall, objectMass)
+sphereBallCollision.createSphere()
+
+const cube = new THREE.Mesh(new THREE.BoxGeometry(0.75, 0.75, 0.75), objectMaterial)
+cube.position.set(3, 1, -1)
+
+const cube2 = new THREE.Mesh(new THREE.BoxGeometry(1, 3, 1), objectMaterial)
+cube2.position.set(1, 0, 1)
+const cube2Container = []
+const testCube = new objectColisionBox(cube2Container, cube2, objectMass)
+testCube.createBox()
+
+const cubeTest = new THREE.Mesh(new THREE.BoxGeometry(1, 2, 1), objectMaterial)
+cubeTest.position.set(-3, 0, 0)
+
+const boxGeometry = new THREE.Mesh(new THREE.BoxGeometry(1, 1, 1), objectMaterial)
+boxGeometry.position.set(5, 0, 1)
 const objectsToUpdate = []
-const boxGeometry = new THREE.BoxGeometry(1, 1, 1)
-const createBox = (width, height, depth, position) =>
-{
-    // Three.js mesh
-    const mesh = new THREE.Mesh(boxGeometry)
-    mesh.scale.set(width, height, depth)
-    mesh.castShadow = true
-    mesh.position.copy(position)
-    scene.add(mesh)
+const testCube2 = new objectColisionBox(objectsToUpdate, boxGeometry, objectMass)
+testCube2.createBox()
 
-    // Cannon.js body
-    const shape = new CANNON.Box(new CANNON.Vec3(width * 0.5, height * 0.5, depth * 0.5))
+const torus = new THREE.Mesh(new THREE.TorusGeometry(0.3, 0.2, 32, 64), objectMaterial)
+torus.position.set(-1.5, 0, 0) 
 
-    const body = new CANNON.Body({
-        mass: 0,
-        position: new CANNON.Vec3(1, 4, 2),
-        shape: shape,
-        // material: defaultMaterial
-    })
-    body.position.copy(position)
-    world.addBody(body)
-
-    // Save in objects
-    objectsToUpdate.push({ mesh, body })
-}
-createBox(1, 4, 2, { x: 5, y: 0, z: 0 })
+scene.add(cube, torus, cubeTest)
 
 /**
  * Models
@@ -231,6 +235,7 @@ const gltfLoader = new GLTFLoader()
 const gltfURL = "/models/gltf/Fox.gltf";
 gltfLoader.load(gltfURL,(gltf) => {
         gltf.scene.scale.set(0.015, 0.015, 0.015)
+        gltf.scene.position.set(0, 0, 0)
         // console.log(gltf.scene.scale);
         scene.add(gltf.scene)
         //TODO: 여기 안에다가 physical gemometry 생성하기
@@ -298,20 +303,16 @@ function processKeyboard() {
 */
 function processKeyboardRaycaster() {
     if(keyboard['w'] || keyboard['ArrowUp']) {
-        camera.position.x =+1
-        console.log('up');
+        camera.position.z =+1
     }
     if(keyboard['s'] || keyboard['ArrowDown']) {
-        camera.position.x =-1
-        console.log('down');
+        camera.position.z =-1
     }
     if(keyboard['d'] || keyboard['ArrowRight']) {
-        camera.position.z =-1
-        console.log('right');
+        camera.position.x =-1
     }
     if(keyboard['a'] || keyboard['ArrowLeft']) {
-        camera.position.z =+1
-        console.log('left');
+        camera.position.x =+1
     }
 }
 
@@ -338,8 +339,14 @@ const tick = () =>
     }
 
     //objects
-    sphere.position.copy(sphereBody.position)
-    floorBody.position.copy(plane.position)
+    wallFrontContainer[0].box.position.copy(wallFrontContainer[0].body.position)
+    wallBackContainer[0].box.position.copy(wallBackContainer[0].body.position)
+    wallRightContainer[0].box.position.copy(wallRightContainer[0].body.position)
+    wallLeftContainer[0].box.position.copy(wallLeftContainer[0].body.position)
+    floorBody.position.copy(floor.position)
+    sphereBallContainer[0].sphere.position.copy(sphereBallContainer[0].body.position)
+    cube2Container[0].box.position.copy(cube2Container[0].body.position)
+    objectsToUpdate[0].box.position.copy(objectsToUpdate[0].body.position)
 
     /**
      * Raycaster
@@ -352,16 +359,13 @@ const tick = () =>
     rayDirection.normalize()
     raycaster.set(rayOrigin, rayDirection)
     
-    const objectsToTest = [torus, cube, cubeTest]
+    const objectsToTest = [torus, cube, cubeTest, wallFront, wallBack, wallRight, wallLeft]
     const intersects = raycaster.intersectObjects(objectsToTest)
-    for(const object of objectsToTest)
-    {
-        object.material.color.set('#ff0000')
+    for(const object of objectsToTest){
+        object.material.color.set('#88B7B5')
     }
-
-    for(const intersect of intersects)
-    {
-        intersect.object.material.color.set('#0000ff')
+    for(const intersect of intersects){
+        intersect.object.material.color.set('#310A31')
         processKeyboardRaycaster()
     }
     // console.log(camera.position);
