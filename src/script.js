@@ -105,6 +105,7 @@ function objectColisionBox(container, box, mass) {
             shape: shape,
         })
         body.position.copy(box.position)
+        body.rotation = box.rotation
         scene.add(box)
         world.addBody(body)
 
@@ -125,6 +126,7 @@ function objectColisionSphere(container, sphere, mass) {
             shape: shape,
         })
         body.position.copy(sphere.position)
+        body.rotation = sphere.rotation
         scene.add(sphere)
         world.addBody(body)
 
@@ -138,7 +140,7 @@ function objectColisionSphere(container, sphere, mass) {
 // Base camera
 const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height, 0.1, 100)
 //camera collision test
-camera.position.set(0, 1, 2)
+camera.position.set(0, 1, 0)
 //object rendering
 // camera.position.set(15, 1, 0)
 scene.add(camera)
@@ -265,16 +267,17 @@ renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
 /**
  * FPS View
  */
-let controlCamera = new PointerLockControls(camera, renderer.domElement);
 const clock = new THREE.Clock();
-
+let controlCamera = new PointerLockControls(camera, renderer.domElement);
 let button = document.querySelector('#button')
+let speed = 0.2;
+let keyboard = []
+
 button.addEventListener('click', () => {
     console.log('ViewStart');
     controlCamera.lock()
 })
 
-let keyboard = []
 addEventListener('keydown', (e)=> {
     keyboard[e.key] = true;
 })
@@ -283,7 +286,6 @@ addEventListener('keyup', (e)=> {
 })
 
 function processKeyboard() {
-    let speed = 0.2;
     if(keyboard['w'] || keyboard['ArrowUp']) {
         controlCamera.moveForward(speed);
     }
@@ -301,22 +303,20 @@ function processKeyboard() {
 /**
 * Camera Raycaster
 */
+//up key를 누르고 옆으로 빠져나가면 나가짐
+//이걸 해결해야함
 function processKeyboardRaycaster() {
     if(keyboard['w'] || keyboard['ArrowUp']) {
-        camera.position.z =+0.2
-        camera.position.x =+0.2
+        camera.position.z +=5
     }
     if(keyboard['s'] || keyboard['ArrowDown']) {
-        camera.position.x =-0.2
-        camera.position.z =-0.2
+        camera.position.z -=5
     }
     if(keyboard['d'] || keyboard['ArrowRight']) {
-        camera.position.x =-0.2
-        camera.position.z =-0.2
+        camera.position.x -=5
     }
     if(keyboard['a'] || keyboard['ArrowLeft']) {
-        camera.position.x =+0.2
-        camera.position.z =+0.2
+        camera.position.x +=5
     }
 }
 
@@ -353,9 +353,8 @@ const tick = () =>
     /**
      * Raycaster
      */
-    const cameraX = camera.position.x
-    const cameraZ = camera.position.z
-    const rayOrigin = new THREE.Vector3(cameraX, 0, cameraZ)
+    let cameraPosition = camera.position
+    const rayOrigin = new THREE.Vector3(cameraPosition.x, 0, cameraPosition.z)
     const raycaster = new THREE.Raycaster()
     const rayDirection = new THREE.Vector3(10,10,10)
     rayDirection.normalize()
@@ -369,8 +368,8 @@ const tick = () =>
     for(const intersect of intersects){
         intersect.object.material.color.set('#310A31')
         processKeyboardRaycaster()
+        console.log(cameraPosition);
     }
-    // console.log(camera.position);
 
     // Update objects
     cube.rotation.y = 0.1 * elapsedTime
@@ -382,7 +381,6 @@ const tick = () =>
     // Call tick again on the next frame
     window.requestAnimationFrame(tick)
 }
-
 tick()
 
 function drawScene() { 
