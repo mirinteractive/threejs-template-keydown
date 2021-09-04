@@ -140,9 +140,7 @@ function objectColisionSphere(container, sphere, mass) {
 // Base camera
 const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height, 0.1, 100)
 //camera collision test
-camera.position.set(0, 1, 0)
-//object rendering
-// camera.position.set(15, 1, 0)
+camera.position.set(3, 1, 5)
 scene.add(camera)
 cameraCollisionBox(1, 2, 1, { x: 0, y: 0, z: 0 })
 
@@ -237,8 +235,7 @@ const gltfLoader = new GLTFLoader()
 const gltfURL = "/models/gltf/Fox.gltf";
 gltfLoader.load(gltfURL,(gltf) => {
         gltf.scene.scale.set(0.015, 0.015, 0.015)
-        gltf.scene.position.set(0, 0, 0)
-        // console.log(gltf.scene.scale);
+        gltf.scene.position.set(10, 0, 0)
         scene.add(gltf.scene)
         //TODO: 여기 안에다가 physical gemometry 생성하기
     }
@@ -249,7 +246,7 @@ gltfLoader.load(gltfURL,(gltf) => {
  const fbxLoader = new FBXLoader(); 
  fbxLoader.load(fbxURL,(fbx) => {
     fbx.scale.set(0.0015, 0.0015, 0.0015)
-    fbx.position.set(20, 0, 0)
+    fbx.position.set(15, 0, 0)
     fbx.rotation.set(0, Math.PI*0.5, 0)
     scene.add(fbx)
 }
