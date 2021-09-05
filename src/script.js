@@ -300,20 +300,18 @@ function processKeyboard() {
 /**
 * Camera Raycaster
 */
-//up key를 누르고 옆으로 빠져나가면 나가짐
-//이걸 해결해야함
-function processKeyboardRaycaster() {
-    if(keyboard['w'] || keyboard['ArrowUp']) {
-        camera.position.z +=5
+function processRaycating() {
+    if(camera.position.x < 0) {
+        camera.position.x += 5
     }
-    if(keyboard['s'] || keyboard['ArrowDown']) {
-        camera.position.z -=5
+    if(camera.position.x > 0) {
+        camera.position.x -= 5
     }
-    if(keyboard['d'] || keyboard['ArrowRight']) {
-        camera.position.x -=5
+    if(camera.position.z < 0) {
+        camera.position.z += 5
     }
-    if(keyboard['a'] || keyboard['ArrowLeft']) {
-        camera.position.x +=5
+    if(camera.position.z > 0) {
+        camera.position.z -= 5
     }
 }
 
@@ -364,7 +362,7 @@ const tick = () =>
     }
     for(const intersect of intersects){
         intersect.object.material.color.set('#310A31')
-        processKeyboardRaycaster()
+        processRaycating()
         console.log(cameraPosition);
     }
 
