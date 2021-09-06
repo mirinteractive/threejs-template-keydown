@@ -475,4 +475,4 @@ function drawScene() {
     processKeyboard();
     requestAnimationFrame(drawScene);
 }
-drawScene();
+drawScene(); 
