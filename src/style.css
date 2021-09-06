@@ -21,7 +21,7 @@ body
 
 #button {
     position: absolute;
-    background-color: rgb(156, 57, 180);
-    color: cornsilk;
+    background-color: #086788;
+    color: #F0C808;
     z-index: 10;
 }

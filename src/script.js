@@ -355,7 +355,7 @@ renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
 const clock = new THREE.Clock();
 let controlCamera = new PointerLockControls(camera, renderer.domElement);
 let button = document.querySelector('#button')
-let speed = 0.2;
+let speed = 0.3;
 let keyboard = []
 
 button.addEventListener('click', () => {
