@@ -43,7 +43,7 @@ scene.add(ambientLight)
 
 //directional light
 const directionalLight = new THREE.DirectionalLight(0xffffff, 1)
-directionalLight.position.set(1, 0.25, 0)
+directionalLight.position.set(0, 0.25, 0)
 scene.add(directionalLight)
 
 /**
@@ -139,10 +139,11 @@ function objectColisionSphere(container, sphere, mass) {
  */
 // Base camera
 const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height, 0.1, 100)
-//camera collision test
-camera.position.set(3, 2, 5)
+camera.position.set(-30, 1, 10)
+//proper rotation point
+camera.rotation.set(0, -Math.PI*0.3, 0)
 scene.add(camera)
-cameraCollisionBox(1, 2, 1, { x: 0, y: 0, z: 0 })
+cameraCollisionBox(2, 2, 2, { x: 0, y: 0, z: 0 })
 
 /**
  * Objects
@@ -150,7 +151,11 @@ cameraCollisionBox(1, 2, 1, { x: 0, y: 0, z: 0 })
 //floor
 const floorMaterial = new THREE.MeshStandardMaterial({
     roughness: 0.4,
-    color: '#F4ECD6', 
+    color: '#FFF1D0', 
+})
+const wallMaterial = new THREE.MeshStandardMaterial({
+    roughness: 0.4,
+    color: '#06AED5', 
 })
 
 const floor = new THREE.Mesh(new THREE.PlaneGeometry(80, 50),floorMaterial)
@@ -168,89 +173,188 @@ floorBody.quaternion.setFromAxisAngle(
 world.addBody(floorBody)
 scene.add(floor)
 
-const wallFront = new THREE.Mesh(new THREE.BoxGeometry(80, 20, 1))
+const wallFront = new THREE.Mesh(new THREE.BoxGeometry(80, 20, 1),wallMaterial)
 wallFront.position.set(0, 0, -25)
 const wallFrontContainer = []
 const wallFrontCollision = new objectColisionBox(wallFrontContainer, wallFront, floorMass)
 wallFrontCollision.createBox()
 
-const wallBack = new THREE.Mesh(new THREE.BoxGeometry(80, 20, 1))
+const wallBack = new THREE.Mesh(new THREE.BoxGeometry(80, 20, 1),wallMaterial)
 wallBack.position.set(0, 0, 25)
 const wallBackContainer = []
 const wallBackCollision = new objectColisionBox(wallBackContainer, wallBack, floorMass)
 wallBackCollision.createBox()
 
-const wallRight = new THREE.Mesh(new THREE.BoxGeometry(1, 20, 50))
+const wallRight = new THREE.Mesh(new THREE.BoxGeometry(1, 20, 50),wallMaterial)
 wallRight.position.set(40, 0, 0)
 const wallRightContainer = []
 const wallRightCollision = new objectColisionBox(wallRightContainer, wallRight, floorMass)
 wallRightCollision.createBox()
 
-const wallLeft = new THREE.Mesh(new THREE.BoxGeometry(1, 20, 50))
+const wallLeft = new THREE.Mesh(new THREE.BoxGeometry(1, 20, 50),wallMaterial)
 wallLeft.position.set(-40, 0, 0)
 const wallLeftContainer = []
 const wallLeftCollision = new objectColisionBox(wallLeftContainer, wallLeft, floorMass)
 wallLeftCollision.createBox()
 
+//door position
+const doorMaterial = new THREE.MeshStandardMaterial({
+    roughness: 0.4,
+    color: '#000000', 
+})
+
+const doorToNews = new THREE.Mesh(new THREE.BoxGeometry(5, 10, 0.1),doorMaterial)
+doorToNews.position.set(-20, 3, -24)
+const doorToTtv = new THREE.Mesh(new THREE.BoxGeometry(0.1, 10, 5),doorMaterial)
+doorToTtv.position.set(39, 3, -5)
+const doorToVtr = new THREE.Mesh(new THREE.BoxGeometry(0.1, 10, 5),doorMaterial)
+doorToVtr.position.set(39, 3, 2)
+const doorToPicasso = new THREE.Mesh(new THREE.BoxGeometry(0.1, 10, 5),doorMaterial)
+doorToPicasso.position.set(39, 3, 19)
+const doorToPortfolio = new THREE.Mesh(new THREE.BoxGeometry(0.1, 10, 5),doorMaterial)
+doorToPortfolio.position.set(-39, 3, -19)
+const doorToMediaTeam = new THREE.Mesh(new THREE.BoxGeometry(0.1, 10, 5),doorMaterial)
+doorToMediaTeam.position.set(-39, 3, 19)
+scene.add(doorToNews, doorToTtv, doorToVtr, doorToPicasso, doorToPortfolio, doorToMediaTeam)
+
 //objects
 const objectMaterial = new THREE.MeshStandardMaterial({
     roughness: 0.4,
-    color: '#88B7B5', 
+    color: '#086788', 
 })
 
-const sphereBall = new THREE.Mesh(new THREE.SphereGeometry(0.5, 32, 32), objectMaterial)
-sphereBall.position.set(1.5, 0, 0)
-const sphereBallContainer = []
-const sphereBallCollision = new objectColisionSphere(sphereBallContainer, sphereBall, objectMass)
-sphereBallCollision.createSphere()
+const wallOfFame = new THREE.Mesh(new THREE.BoxGeometry(15, 8, 0.3),objectMaterial)
+wallOfFame.position.set(-9, 4, -24)
+const wallOfFameContainer = []
+const wallOfFametCollision = new objectColisionBox(wallOfFameContainer, wallOfFame, floorMass)
+wallOfFametCollision.createBox()
 
-const cube = new THREE.Mesh(new THREE.BoxGeometry(0.75, 0.75, 0.75), objectMaterial)
-cube.position.set(3, 1, -1)
+const wallOfMonument = new THREE.Mesh(new THREE.BoxGeometry(6, 8, 0.3),objectMaterial)
+wallOfMonument.position.set(3, 4, -24)
+const wallOfMonumentContainer = []
+const wallOfMonumentCollision = new objectColisionBox(wallOfMonumentContainer, wallOfMonument, floorMass)
+wallOfMonumentCollision.createBox()
 
-const cube2 = new THREE.Mesh(new THREE.BoxGeometry(1, 3, 1), objectMaterial)
-cube2.position.set(1, 0, 1)
-const cube2Container = []
-const testCube = new objectColisionBox(cube2Container, cube2, objectMass)
-testCube.createBox()
+const wallOfTtvVideo1 = new THREE.Mesh(new THREE.BoxGeometry(0.3, 3, 5),objectMaterial)
+wallOfTtvVideo1.position.set(39, 7, -3)
+const wallOfTtvVideo1Container = []
+const wallOfTtvVideo1Collision = new objectColisionBox(wallOfTtvVideo1Container, wallOfTtvVideo1, floorMass)
+wallOfTtvVideo1Collision.createBox()
 
-const cubeTest = new THREE.Mesh(new THREE.BoxGeometry(1, 2, 1), objectMaterial)
-cubeTest.position.set(-3, 0, 0)
+const stickerOfTtvPdf = new THREE.Mesh(new THREE.BoxGeometry(0.3, 1.5, 1.5),objectMaterial)
+stickerOfTtvPdf.position.set(39, 4.5, -1.3)
+const stickerOfTtvPdfContainer = []
+const stickerOfTtvPdfCollision = new objectColisionBox(stickerOfTtvPdfContainer, stickerOfTtvPdf, floorMass)
+stickerOfTtvPdfCollision.createBox()
 
-const boxGeometry = new THREE.Mesh(new THREE.BoxGeometry(1, 1, 1), objectMaterial)
-boxGeometry.position.set(5, 0, 1)
-const objectsToUpdate = []
-const testCube2 = new objectColisionBox(objectsToUpdate, boxGeometry, objectMass)
-testCube2.createBox()
+const wallOfTtvVideo2 = new THREE.Mesh(new THREE.BoxGeometry(0.3, 3, 5),objectMaterial)
+wallOfTtvVideo2.position.set(39, 2, -0.8)
+const wallOfTtvVideo2Container = []
+const wallOfTtvVideo2Collision = new objectColisionBox(wallOfTtvVideo2Container, wallOfTtvVideo2, floorMass)
+wallOfTtvVideo2Collision.createBox()
 
-const torus = new THREE.Mesh(new THREE.TorusGeometry(0.3, 0.2, 32, 64), objectMaterial)
-torus.position.set(-1.5, 0, 0) 
+const grpupTtv = new THREE.Group();
+grpupTtv.add(wallOfTtvVideo1, wallOfTtvVideo2, stickerOfTtvPdf)
+grpupTtv.position.set(0, -0.9, -10)
 
-scene.add(cube, torus, cubeTest)
+const stickerOfFb = new THREE.Mesh(new THREE.BoxGeometry(1.5, 1.5, 0),objectMaterial)
+stickerOfFb.position.set(-32, 5, 24)
+const stickerOfFbContainer = []
+const stickerOfFbCollision = new objectColisionBox(stickerOfFbContainer, stickerOfFb, floorMass)
+stickerOfFbCollision.createBox()
+
+const stickerOfIg= new THREE.Mesh(new THREE.BoxGeometry(1.5, 1.5, 0),objectMaterial)
+stickerOfIg.position.set(-35, 4, 24)
+const stickerOfIgContainer = []
+const stickerOfIgCollision = new objectColisionBox(stickerOfIgContainer, stickerOfIg, floorMass)
+stickerOfIgCollision.createBox()
+
+const stickerOfYt= new THREE.Mesh(new THREE.BoxGeometry(1.5, 1.5, 0),objectMaterial)
+stickerOfYt.position.set(-33, 3, 24)
+const stickerOfYtContainer = []
+const stickerOfYtCollision = new objectColisionBox(stickerOfYtContainer, stickerOfYt, floorMass)
+stickerOfYtCollision.createBox()
+
+const grpupSns = new THREE.Group();
+grpupSns.add(stickerOfFb, stickerOfIg, stickerOfYt)
+
+const stickerOfTech= new THREE.Mesh(new THREE.BoxGeometry(1.5, 1.5, 0),objectMaterial)
+stickerOfTech.position.set(32, 5, 24)
+const stickerOfTechContainer = []
+const stickerOfTechCollision = new objectColisionBox(stickerOfTechContainer, stickerOfTech, floorMass)
+stickerOfTechCollision.createBox()
+
+const stickerOfArch = new THREE.Mesh(new THREE.BoxGeometry(1.5, 1.5, 0),objectMaterial)
+stickerOfArch.position.set(29, 4, 24)
+const stickerOfArchContainer = []
+const stickerOfArchCollision = new objectColisionBox(stickerOfArchContainer, stickerOfArch, floorMass)
+stickerOfArchCollision.createBox()
+
+const stickerOfIr = new THREE.Mesh(new THREE.BoxGeometry(1.5, 1.5, 0),objectMaterial)
+stickerOfIr.position.set(31, 3, 24)
+const stickerOfIrContainer = []
+const stickerOfIrCollision = new objectColisionBox(stickerOfIrContainer, stickerOfIr, floorMass)
+stickerOfIrCollision.createBox()
+
+const grpupDock = new THREE.Group();
+grpupSns.add(stickerOfTech, stickerOfArch, stickerOfIr)
+
+//ToDo: collision box에서 scene.add 중복되지 않도록 처리해주기
+scene.add( grpupTtv, grpupSns, grpupDock );
+
+// const sphereBall = new THREE.Mesh(new THREE.SphereGeometry(0.5, 32, 32), objectMaterial)
+// sphereBall.position.set(1.5, 0, 0)
+// const sphereBallContainer = []
+// const sphereBallCollision = new objectColisionSphere(sphereBallContainer, sphereBall, objectMass)
+// sphereBallCollision.createSphere()
+
+// const cube = new THREE.Mesh(new THREE.BoxGeometry(0.75, 0.75, 0.75), objectMaterial)
+// cube.position.set(3, 1, -1)
+
+// const cube2 = new THREE.Mesh(new THREE.BoxGeometry(1, 3, 1), objectMaterial)
+// cube2.position.set(1, 0, 1)
+// const cube2Container = []
+// const testCube = new objectColisionBox(cube2Container, cube2, objectMass)
+// testCube.createBox()
+
+// const cubeTest = new THREE.Mesh(new THREE.BoxGeometry(1, 2, 1), objectMaterial)
+// cubeTest.position.set(-3, 0, 0)
+
+// const boxGeometry = new THREE.Mesh(new THREE.BoxGeometry(1, 1, 1), objectMaterial)
+// boxGeometry.position.set(5, 0, 1)
+// const objectsToUpdate = []
+// const testCube2 = new objectColisionBox(objectsToUpdate, boxGeometry, objectMass)
+// testCube2.createBox()
+
+// const torus = new THREE.Mesh(new THREE.TorusGeometry(0.3, 0.2, 32, 64), objectMaterial)
+// torus.position.set(-1.5, 0, 0) 
+
+// scene.add(cube, torus, cubeTest)
 
 /**
  * Models
  */
 //gltf
-const gltfLoader = new GLTFLoader()
-const gltfURL = "/models/gltf/Fox.gltf";
-gltfLoader.load(gltfURL,(gltf) => {
-        gltf.scene.scale.set(0.015, 0.015, 0.015)
-        gltf.scene.position.set(10, 0, 0)
-        scene.add(gltf.scene)
-        //TODO: 여기 안에다가 physical gemometry 생성하기
-    }
-)
+// const gltfLoader = new GLTFLoader()
+// const gltfURL = "/models/gltf/Fox.gltf";
+// gltfLoader.load(gltfURL,(gltf) => {
+//         gltf.scene.scale.set(0.015, 0.015, 0.015)
+//         gltf.scene.position.set(10, 0, 0)
+//         scene.add(gltf.scene)
+//         //TODO: 여기 안에다가 physical gemometry 생성하기
+//     }
+// )
 
 //fbx
- let fbxURL = "/models/fbx/exportfbx_standard.fbx"; 
- const fbxLoader = new FBXLoader(); 
- fbxLoader.load(fbxURL,(fbx) => {
-    fbx.scale.set(0.0015, 0.0015, 0.0015)
-    fbx.position.set(15, 0, 0)
-    fbx.rotation.set(0, Math.PI*0.5, 0)
-    scene.add(fbx)
-}
-)
+//  let fbxURL = "/models/fbx/exportfbx_standard.fbx"; 
+//  const fbxLoader = new FBXLoader(); 
+//  fbxLoader.load(fbxURL,(fbx) => {
+//     fbx.scale.set(0.0015, 0.0015, 0.0015)
+//     fbx.position.set(15, 0, 0)
+//     fbx.rotation.set(0, Math.PI*0.5, 0)
+//     scene.add(fbx)
+// }
+// )
 
 /**
  * Renderer
@@ -301,13 +405,13 @@ function processKeyboard() {
 * Camera Raycaster
 */
 function processRaycating() {
-    if(camera.position.x < 0) {
+    if(camera.position.x <= 0) {
         camera.position.x += 5
     }
     if(camera.position.x > 0) {
         camera.position.x -= 5
     }
-    if(camera.position.z < 0) {
+    if(camera.position.z <= 0) {
         camera.position.z += 5
     }
     if(camera.position.z > 0) {
@@ -341,9 +445,11 @@ const tick = () =>
     wallRightContainer[0].box.position.copy(wallRightContainer[0].body.position)
     wallLeftContainer[0].box.position.copy(wallLeftContainer[0].body.position)
     floorBody.position.copy(floor.position)
-    sphereBallContainer[0].sphere.position.copy(sphereBallContainer[0].body.position)
-    cube2Container[0].box.position.copy(cube2Container[0].body.position)
-    objectsToUpdate[0].box.position.copy(objectsToUpdate[0].body.position)
+    // sphereBallContainer[0].sphere.position.copy(sphereBallContainer[0].body.position)
+    // cube2Container[0].box.position.copy(cube2Container[0].body.position)
+    // cube2Container[0].box.quaternion.copy(cube2Container[0].body.quaternion)
+    // objectsToUpdate[0].box.position.copy(objectsToUpdate[0].body.position)
+    // objectsToUpdate[0].box.quaternion.copy(objectsToUpdate[0].body.quaternion)
 
     /**
      * Raycaster
@@ -358,20 +464,21 @@ const tick = () =>
     const objectsToTest = [wallFront, wallBack, wallRight, wallLeft]
     const intersects = raycaster.intersectObjects(objectsToTest)
     for(const object of objectsToTest){
-        object.material.color.set('#88B7B5')
+        object.material.color.set('#06AED5')
     }
     for(const intersect of intersects){
         intersect.object.material.color.set('#310A31')
         processRaycating()
         console.log(cameraPosition);
+        // console.log(wallBackContainer[0].body.position);
     }
 
     // Update objects
-    cube.rotation.y = 0.1 * elapsedTime
-    torus.rotation.y = 0.1 * elapsedTime
+    // cube.rotation.y = 0.1 * elapsedTime
+    // torus.rotation.y = 0.1 * elapsedTime
 
-    cube.rotation.x = 0.15 * elapsedTime 
-    torus.rotation.x = 0.15 * elapsedTime
+    // cube.rotation.x = 0.15 * elapsedTime 
+    // torus.rotation.x = 0.15 * elapsedTime
 
     // Call tick again on the next frame
     window.requestAnimationFrame(tick)
