@@ -140,7 +140,7 @@ function objectColisionSphere(container, sphere, mass) {
 // Base camera
 const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height, 0.1, 100)
 //camera collision test
-camera.position.set(3, 1, 5)
+camera.position.set(3, 2, 5)
 scene.add(camera)
 cameraCollisionBox(1, 2, 1, { x: 0, y: 0, z: 0 })
 
@@ -155,7 +155,7 @@ const floorMaterial = new THREE.MeshStandardMaterial({
 
 const floor = new THREE.Mesh(new THREE.PlaneGeometry(80, 50),floorMaterial)
 floor.rotation.set(-Math.PI*0.5, 0, 0)
-floor.position.set(0, -0.65, 0)
+floor.position.set(0, -1, 0)
 const floorShape = new CANNON.Plane()
 const floorBody = new CANNON.Body({
     mass: floorMass,
@@ -168,25 +168,25 @@ floorBody.quaternion.setFromAxisAngle(
 world.addBody(floorBody)
 scene.add(floor)
 
-const wallFront = new THREE.Mesh(new THREE.BoxGeometry(80, 10, 1))
+const wallFront = new THREE.Mesh(new THREE.BoxGeometry(80, 20, 1))
 wallFront.position.set(0, 0, -25)
 const wallFrontContainer = []
 const wallFrontCollision = new objectColisionBox(wallFrontContainer, wallFront, floorMass)
 wallFrontCollision.createBox()
 
-const wallBack = new THREE.Mesh(new THREE.BoxGeometry(80, 10, 1))
+const wallBack = new THREE.Mesh(new THREE.BoxGeometry(80, 20, 1))
 wallBack.position.set(0, 0, 25)
 const wallBackContainer = []
 const wallBackCollision = new objectColisionBox(wallBackContainer, wallBack, floorMass)
 wallBackCollision.createBox()
 
-const wallRight = new THREE.Mesh(new THREE.BoxGeometry(1, 10, 50))
+const wallRight = new THREE.Mesh(new THREE.BoxGeometry(1, 20, 50))
 wallRight.position.set(40, 0, 0)
 const wallRightContainer = []
 const wallRightCollision = new objectColisionBox(wallRightContainer, wallRight, floorMass)
 wallRightCollision.createBox()
 
-const wallLeft = new THREE.Mesh(new THREE.BoxGeometry(1, 10, 50))
+const wallLeft = new THREE.Mesh(new THREE.BoxGeometry(1, 20, 50))
 wallLeft.position.set(-40, 0, 0)
 const wallLeftContainer = []
 const wallLeftCollision = new objectColisionBox(wallLeftContainer, wallLeft, floorMass)
