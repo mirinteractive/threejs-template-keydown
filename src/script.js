@@ -222,85 +222,78 @@ const objectMaterial = new THREE.MeshStandardMaterial({
     roughness: 0.4,
     color: '#086788', 
 })
+const monumentMaterial = new THREE.MeshStandardMaterial({
+    roughness: 0.4,
+    color: '#DD1C1A', 
+})
 
 const wallOfFame = new THREE.Mesh(new THREE.BoxGeometry(15, 8, 0.3),objectMaterial)
 wallOfFame.position.set(-9, 4, -24)
-const wallOfFameContainer = []
-const wallOfFametCollision = new objectColisionBox(wallOfFameContainer, wallOfFame, floorMass)
-wallOfFametCollision.createBox()
-
-const wallOfMonument = new THREE.Mesh(new THREE.BoxGeometry(6, 8, 0.3),objectMaterial)
-wallOfMonument.position.set(3, 4, -24)
-const wallOfMonumentContainer = []
-const wallOfMonumentCollision = new objectColisionBox(wallOfMonumentContainer, wallOfMonument, floorMass)
-wallOfMonumentCollision.createBox()
+const wallOfMomentum = new THREE.Mesh(new THREE.BoxGeometry(6, 8, 0.3),objectMaterial)
+wallOfMomentum.position.set(3, 4, -24)
+//
+const grpupIntro = new THREE.Group();
+grpupIntro.add(wallOfFame, wallOfMomentum)
 
 const wallOfTtvVideo1 = new THREE.Mesh(new THREE.BoxGeometry(0.3, 3, 5),objectMaterial)
 wallOfTtvVideo1.position.set(39, 7, -3)
-const wallOfTtvVideo1Container = []
-const wallOfTtvVideo1Collision = new objectColisionBox(wallOfTtvVideo1Container, wallOfTtvVideo1, floorMass)
-wallOfTtvVideo1Collision.createBox()
-
 const stickerOfTtvPdf = new THREE.Mesh(new THREE.BoxGeometry(0.3, 1.5, 1.5),objectMaterial)
 stickerOfTtvPdf.position.set(39, 4.5, -1.3)
-const stickerOfTtvPdfContainer = []
-const stickerOfTtvPdfCollision = new objectColisionBox(stickerOfTtvPdfContainer, stickerOfTtvPdf, floorMass)
-stickerOfTtvPdfCollision.createBox()
-
 const wallOfTtvVideo2 = new THREE.Mesh(new THREE.BoxGeometry(0.3, 3, 5),objectMaterial)
 wallOfTtvVideo2.position.set(39, 2, -0.8)
-const wallOfTtvVideo2Container = []
-const wallOfTtvVideo2Collision = new objectColisionBox(wallOfTtvVideo2Container, wallOfTtvVideo2, floorMass)
-wallOfTtvVideo2Collision.createBox()
-
+//
 const grpupTtv = new THREE.Group();
 grpupTtv.add(wallOfTtvVideo1, wallOfTtvVideo2, stickerOfTtvPdf)
 grpupTtv.position.set(0, -0.9, -10)
 
 const stickerOfFb = new THREE.Mesh(new THREE.BoxGeometry(1.5, 1.5, 0),objectMaterial)
 stickerOfFb.position.set(-32, 5, 24)
-const stickerOfFbContainer = []
-const stickerOfFbCollision = new objectColisionBox(stickerOfFbContainer, stickerOfFb, floorMass)
-stickerOfFbCollision.createBox()
-
 const stickerOfIg= new THREE.Mesh(new THREE.BoxGeometry(1.5, 1.5, 0),objectMaterial)
 stickerOfIg.position.set(-35, 4, 24)
-const stickerOfIgContainer = []
-const stickerOfIgCollision = new objectColisionBox(stickerOfIgContainer, stickerOfIg, floorMass)
-stickerOfIgCollision.createBox()
-
 const stickerOfYt= new THREE.Mesh(new THREE.BoxGeometry(1.5, 1.5, 0),objectMaterial)
 stickerOfYt.position.set(-33, 3, 24)
-const stickerOfYtContainer = []
-const stickerOfYtCollision = new objectColisionBox(stickerOfYtContainer, stickerOfYt, floorMass)
-stickerOfYtCollision.createBox()
-
+//
 const grpupSns = new THREE.Group();
 grpupSns.add(stickerOfFb, stickerOfIg, stickerOfYt)
 
 const stickerOfTech= new THREE.Mesh(new THREE.BoxGeometry(1.5, 1.5, 0),objectMaterial)
 stickerOfTech.position.set(32, 5, 24)
-const stickerOfTechContainer = []
-const stickerOfTechCollision = new objectColisionBox(stickerOfTechContainer, stickerOfTech, floorMass)
-stickerOfTechCollision.createBox()
-
 const stickerOfArch = new THREE.Mesh(new THREE.BoxGeometry(1.5, 1.5, 0),objectMaterial)
 stickerOfArch.position.set(29, 4, 24)
-const stickerOfArchContainer = []
-const stickerOfArchCollision = new objectColisionBox(stickerOfArchContainer, stickerOfArch, floorMass)
-stickerOfArchCollision.createBox()
-
 const stickerOfIr = new THREE.Mesh(new THREE.BoxGeometry(1.5, 1.5, 0),objectMaterial)
 stickerOfIr.position.set(31, 3, 24)
-const stickerOfIrContainer = []
-const stickerOfIrCollision = new objectColisionBox(stickerOfIrContainer, stickerOfIr, floorMass)
-stickerOfIrCollision.createBox()
-
+//
 const grpupDock = new THREE.Group();
 grpupSns.add(stickerOfTech, stickerOfArch, stickerOfIr)
 
-//ToDo: collision box에서 scene.add 중복되지 않도록 처리해주기
-scene.add( grpupTtv, grpupSns, grpupDock );
+const monumentLogoBot = new THREE.Mesh(new THREE.BoxGeometry(1, 2, 1), monumentMaterial)
+monumentLogoBot.position.set(0, 0, 0)
+const monumentLogoTop = new THREE.Mesh(new THREE.BoxGeometry(0.75, 0.75, 0.75), monumentMaterial)
+monumentLogoTop.position.set(0, 2, 0)
+//
+const grpupLogo = new THREE.Group();
+grpupLogo.add(monumentLogoBot, monumentLogoTop)
+grpupLogo.position.set(-28, 0, 0)
+
+const monumentContactBot = new THREE.Mesh(new THREE.BoxGeometry(1, 2, 1), monumentMaterial)
+monumentContactBot.position.set(0, 0, 0)
+const monumentContactTop = new THREE.Mesh(new THREE.TorusGeometry(0.3, 0.2, 32, 64), monumentMaterial)
+monumentContactTop.position.set(0, 2, 0)
+//
+const grpupContact = new THREE.Group();
+grpupContact.add(monumentContactBot, monumentContactTop)
+grpupContact.position.set(10, 0, -13)
+
+const monumentTeamBot = new THREE.Mesh(new THREE.BoxGeometry(1, 2, 1), monumentMaterial)
+monumentTeamBot.position.set(0, 0, 0)
+const monumentTeamTop = new THREE.Mesh(new THREE.SphereGeometry(0.5, 32, 32), monumentMaterial)
+monumentTeamTop.position.set(0, 2, 0)
+//
+const grpupTeam = new THREE.Group();
+grpupTeam.add(monumentTeamBot, monumentTeamTop)
+grpupTeam.position.set(-10, 0, 10)
+
+scene.add( grpupIntro, grpupTtv, grpupSns, grpupDock, grpupLogo, grpupContact, grpupTeam );
 
 // const sphereBall = new THREE.Mesh(new THREE.SphereGeometry(0.5, 32, 32), objectMaterial)
 // sphereBall.position.set(1.5, 0, 0)
@@ -310,15 +303,6 @@ scene.add( grpupTtv, grpupSns, grpupDock );
 
 // const cube = new THREE.Mesh(new THREE.BoxGeometry(0.75, 0.75, 0.75), objectMaterial)
 // cube.position.set(3, 1, -1)
-
-// const cube2 = new THREE.Mesh(new THREE.BoxGeometry(1, 3, 1), objectMaterial)
-// cube2.position.set(1, 0, 1)
-// const cube2Container = []
-// const testCube = new objectColisionBox(cube2Container, cube2, objectMass)
-// testCube.createBox()
-
-// const cubeTest = new THREE.Mesh(new THREE.BoxGeometry(1, 2, 1), objectMaterial)
-// cubeTest.position.set(-3, 0, 0)
 
 // const boxGeometry = new THREE.Mesh(new THREE.BoxGeometry(1, 1, 1), objectMaterial)
 // boxGeometry.position.set(5, 0, 1)
@@ -474,11 +458,12 @@ const tick = () =>
     }
 
     // Update objects
-    // cube.rotation.y = 0.1 * elapsedTime
-    // torus.rotation.y = 0.1 * elapsedTime
+    monumentLogoTop.rotation.y = 0.1 * elapsedTime
+    monumentLogoTop.rotation.x = 0.15 * elapsedTime 
 
-    // cube.rotation.x = 0.15 * elapsedTime 
-    // torus.rotation.x = 0.15 * elapsedTime
+    monumentContactTop.rotation.y = 0.5 * elapsedTime
+    monumentContactTop.rotation.x = 0.15 * elapsedTime
+    monumentContactTop.rotation.z = -0.15 * elapsedTime
 
     // Call tick again on the next frame
     window.requestAnimationFrame(tick)
