@@ -346,15 +346,15 @@ const tick = () =>
     objectsToUpdate[0].box.position.copy(objectsToUpdate[0].body.position)
 
     /**
-     * Raycaster
-     */
+    * Raycaster
+    */
     let cameraPosition = camera.position
     const rayOrigin = new THREE.Vector3(cameraPosition.x, 0, cameraPosition.z)
     const raycaster = new THREE.Raycaster()
-    const rayDirection = new THREE.Vector3(10,10,10)
+    const rayDirection = new THREE.Vector3(1,10,1)
     rayDirection.normalize()
     raycaster.set(rayOrigin, rayDirection)
-    
+     
     const objectsToTest = [wallFront, wallBack, wallRight, wallLeft]
     const intersects = raycaster.intersectObjects(objectsToTest)
     for(const object of objectsToTest){
