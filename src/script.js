@@ -284,16 +284,18 @@ const grpupContact = new THREE.Group();
 grpupContact.add(monumentContactBot, monumentContactTop)
 grpupContact.position.set(10, 0, -13)
 
-const monumentTeamBot = new THREE.Mesh(new THREE.BoxGeometry(1, 2, 1), monumentMaterial)
+const monumentTeamBot = new THREE.Mesh(new THREE.SphereGeometry(0.5, 32, 32), monumentMaterial)
 monumentTeamBot.position.set(0, 0, 0)
+const monumentTeamMid = new THREE.Mesh(new THREE.SphereGeometry(0.5, 32, 32), monumentMaterial)
+monumentTeamMid.position.set(0, 1, 0)
 const monumentTeamTop = new THREE.Mesh(new THREE.SphereGeometry(0.5, 32, 32), monumentMaterial)
 monumentTeamTop.position.set(0, 2, 0)
 //
 const grpupTeam = new THREE.Group();
-grpupTeam.add(monumentTeamBot, monumentTeamTop)
+grpupTeam.add(monumentTeamBot, monumentTeamMid, monumentTeamTop)
 grpupTeam.position.set(-10, 0, 10)
 
-scene.add( grpupIntro, grpupTtv, grpupSns, grpupDock, grpupLogo, grpupContact, grpupTeam );
+scene.add(grpupIntro, grpupTtv, grpupSns, grpupDock, grpupLogo, grpupContact, grpupTeam);
 
 // const sphereBall = new THREE.Mesh(new THREE.SphereGeometry(0.5, 32, 32), objectMaterial)
 // sphereBall.position.set(1.5, 0, 0)
