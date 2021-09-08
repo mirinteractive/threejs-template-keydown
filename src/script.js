@@ -142,7 +142,7 @@ const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height, 0.1, 
 //camera collision test
 camera.position.set(3, 1, 5)
 scene.add(camera)
-cameraCollisionBox(1, 2, 1, { x: 0, y: 0, z: 0 })
+cameraCollisionBox(2, 2, 2, { x: 0, y: 0, z: 0 })
 
 /**
  * Objects
@@ -233,13 +233,26 @@ scene.add(cube, torus, cubeTest)
 //gltf
 const gltfLoader = new GLTFLoader()
 const gltfURL = "/models/gltf/Fox.gltf";
+const gltfObjectContainer = []
 gltfLoader.load(gltfURL,(gltf) => {
         gltf.scene.scale.set(0.015, 0.015, 0.015)
-        gltf.scene.position.set(10, 0, 0)
-        scene.add(gltf.scene)
-        //TODO: 여기 안에다가 physical gemometry 생성하기
+        gltf.scene.position.set(1.5, -0.5, 0)
+
+        const gltfObjectCollision = new objectColisionBox(gltfObjectContainer, gltf.scene, objectMass)
+        gltfObjectCollision.createBox()
     }
 )
+console.log('cube2Container', typeof cube2Container);
+console.log('cube2Container', cube2Container);
+console.log('cube2Container', cube2Container[0]);
+console.log('cube2Container', cube2Container.body);
+console.log('cube2Container', Object.values(cube2Container));
+
+console.log('gltfObjectContainer', typeof gltfObjectContainer);
+console.log('gltfObjectContainer', gltfObjectContainer);
+console.log('gltfObjectContainer', gltfObjectContainer[0]);
+console.log('gltfObjectContainer', gltfObjectContainer.body);
+console.log('gltfObjectContainer', Object.values(gltfObjectContainer));
 
 //fbx
  let fbxURL = "/models/fbx/exportfbx_standard.fbx"; 
@@ -344,6 +357,8 @@ const tick = () =>
     sphereBallContainer[0].sphere.position.copy(sphereBallContainer[0].body.position)
     cube2Container[0].box.position.copy(cube2Container[0].body.position)
     objectsToUpdate[0].box.position.copy(objectsToUpdate[0].body.position)
+    // gltfObjectContainer[0].box.position.copy(gltfObjectContainer[0].body.position)
+
 
     /**
     * Raycaster
