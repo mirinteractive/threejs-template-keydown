@@ -297,11 +297,11 @@ grpupTeam.position.set(-10, 0, 10)
 
 scene.add(grpupIntro, grpupTtv, grpupSns, grpupDock, grpupLogo, grpupContact, grpupTeam);
 
-// const sphereBall = new THREE.Mesh(new THREE.SphereGeometry(0.5, 32, 32), objectMaterial)
-// sphereBall.position.set(1.5, 0, 0)
-// const sphereBallContainer = []
-// const sphereBallCollision = new objectColisionSphere(sphereBallContainer, sphereBall, objectMass)
-// sphereBallCollision.createSphere()
+const sphereBall = new THREE.Mesh(new THREE.SphereGeometry(0.5, 32, 32), objectMaterial)
+sphereBall.position.set(1.5, 0, 0)
+const sphereBallContainer = []
+const sphereBallCollision = new objectColisionSphere(sphereBallContainer, sphereBall, objectMass)
+sphereBallCollision.createSphere()
 
 // const cube = new THREE.Mesh(new THREE.BoxGeometry(0.75, 0.75, 0.75), objectMaterial)
 // cube.position.set(3, 1, -1)
@@ -321,15 +321,29 @@ scene.add(grpupIntro, grpupTtv, grpupSns, grpupDock, grpupLogo, grpupContact, gr
  * Models
  */
 //gltf
-// const gltfLoader = new GLTFLoader()
-// const gltfURL = "/models/gltf/Fox.gltf";
-// gltfLoader.load(gltfURL,(gltf) => {
-//         gltf.scene.scale.set(0.015, 0.015, 0.015)
-//         gltf.scene.position.set(10, 0, 0)
-//         scene.add(gltf.scene)
-//         //TODO: 여기 안에다가 physical gemometry 생성하기
-//     }
-// )
+const gltfLoader = new GLTFLoader()
+const gltfURL = "/models/gltf/Fox.gltf";
+const gltfObjectContainer = []
+gltfLoader.load(gltfURL,(gltf) => {
+        gltf.scene.scale.set(0.015, 0.015, 0.015)
+        gltf.scene.position.set(1.5, -0.5, 0)
+
+        const gltfObjectCollision = new objectColisionBox(gltfObjectContainer, gltf.scene, objectMass)
+        gltfObjectCollision.createBox()
+    }
+)
+//3d object
+// console.log('cube2Container', typeof cube2Container);
+// console.log('cube2Container', cube2Container);
+// console.log('cube2Container', cube2Container[0]);
+// console.log('cube2Container', cube2Container.body);
+// console.log('cube2Container', Object.values(cube2Container));
+
+// console.log('gltfObjectContainer', typeof gltfObjectContainer);
+// console.log('gltfObjectContainer', gltfObjectContainer);
+// console.log('gltfObjectContainer', gltfObjectContainer[0]);
+// console.log('gltfObjectContainer', gltfObjectContainer.body);
+// console.log('gltfObjectContainer', Object.values(gltfObjectContainer));
 
 //fbx
 //  let fbxURL = "/models/fbx/exportfbx_standard.fbx"; 
@@ -388,24 +402,6 @@ function processKeyboard() {
 }
 
 /**
-* Camera Raycaster
-*/
-function processRaycating() {
-    if(camera.position.x <= 0) {
-        camera.position.x += 5
-    }
-    if(camera.position.x > 0) {
-        camera.position.x -= 5
-    }
-    if(camera.position.z <= 0) {
-        camera.position.z += 5
-    }
-    if(camera.position.z > 0) {
-        camera.position.z -= 5
-    }
-}
- 
-/**
  * Animate
  */
 //physics: count how much time spent since last tick
@@ -431,32 +427,52 @@ const tick = () =>
     wallRightContainer[0].box.position.copy(wallRightContainer[0].body.position)
     wallLeftContainer[0].box.position.copy(wallLeftContainer[0].body.position)
     floorBody.position.copy(floor.position)
-    // sphereBallContainer[0].sphere.position.copy(sphereBallContainer[0].body.position)
+    sphereBallContainer[0].sphere.position.copy(sphereBallContainer[0].body.position)
     // cube2Container[0].box.position.copy(cube2Container[0].body.position)
     // cube2Container[0].box.quaternion.copy(cube2Container[0].body.quaternion)
     // objectsToUpdate[0].box.position.copy(objectsToUpdate[0].body.position)
     // objectsToUpdate[0].box.quaternion.copy(objectsToUpdate[0].body.quaternion)
 
     /**
-     * Raycaster
-     */
+    * Raycaster
+    */
     let cameraPosition = camera.position
     const rayOrigin = new THREE.Vector3(cameraPosition.x, 0, cameraPosition.z)
-    const raycaster = new THREE.Raycaster()
-    const rayDirection = new THREE.Vector3(10,10,10)
-    rayDirection.normalize()
-    raycaster.set(rayOrigin, rayDirection)
-    
-    const objectsToTest = [wallFront, wallBack, wallRight, wallLeft]
-    const intersects = raycaster.intersectObjects(objectsToTest)
-    for(const object of objectsToTest){
-        object.material.color.set('#06AED5')
+
+    //camera & wall
+    const raycasterWall = new THREE.Raycaster()
+    const rayDirectionWall = new THREE.Vector3(1,10,1)
+    rayDirectionWall.normalize()
+    raycasterWall.set(rayOrigin, rayDirectionWall)
+    const castObject = [wallFront, wallBack, wallRight, wallLeft]
+    const intersectWall = raycasterWall.intersectObjects(castObject)
+
+    //camera & floor
+    const raycasterFloor = new THREE.Raycaster()
+    const rayDirectionFloor = new THREE.Vector3(1,-10,1)
+    rayDirectionFloor.normalize()
+    raycasterFloor.set(rayOrigin, rayDirectionFloor)
+    const castFloor = [floor]
+    const intersectFloor = raycasterFloor.intersectObjects(castFloor)
+
+    for(const object of castObject){
+        object.material.color.set('#88B7B5')
     }
-    for(const intersect of intersects){
-        intersect.object.material.color.set('#310A31')
-        processRaycating()
-        console.log(cameraPosition);
-        // console.log(wallBackContainer[0].body.position);
+    for(const intersect of intersectWall){
+        for(const intersect of intersectFloor) {
+            if(intersectFloor[0].point.x < 0) {
+                camera.position.x += 5
+            }
+            if(intersectFloor[0].point.x > 0) {
+                camera.position.x -= 5
+            }
+            if(intersectFloor[0].point.z < 0) {
+                camera.position.z += 5
+            }
+            if(intersectFloor[0].point.z > 0) {
+                camera.position.z -= 5
+            }
+        }
     }
 
     // Update objects
