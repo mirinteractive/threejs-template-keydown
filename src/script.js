@@ -146,9 +146,9 @@ scene.add(camera)
 cameraCollisionBox(2, 2, 2, { x: 0, y: 0, z: 0 })
 
 /**
- * Objects
+ * Main Space
  */
-//floor
+//floor&wall
 const floorMaterial = new THREE.MeshStandardMaterial({
     roughness: 0.4,
     color: '#FFF1D0', 
@@ -192,7 +192,7 @@ const wallRightCollision = new objectColisionBox(wallRightContainer, wallRight, 
 wallRightCollision.createBox()
 
 const wallLeft = new THREE.Mesh(new THREE.BoxGeometry(1, 20, 50),wallMaterial)
-wallLeft.position.set(-39, 0, -10)
+wallLeft.position.set(-40, 0, -10)
 const wallLeftContainer = []
 const wallLeftCollision = new objectColisionBox(wallLeftContainer, wallLeft, floorMass)
 wallLeftCollision.createBox()
@@ -343,6 +343,15 @@ gltfLoader.load(gltfURL,(gltf) => {
 // )
 
 /**
+ * Testing Space
+ */
+ const floorTest = new THREE.Mesh(new THREE.PlaneGeometry(20, 50))
+ floorTest.rotation.set(-Math.PI*0.5, 0, 0)
+ floorTest.position.set(-50, -1, 0)
+ scene.add(floorTest)
+ //ToDo: plane에 벽 만들어서 로직 test 진행
+
+/**
  * Renderer
  */
 const renderer = new THREE.WebGLRenderer({
@@ -438,7 +447,7 @@ const tick = () =>
     const rayDirectionFloor = new THREE.Vector3(1,-10,1)
     rayDirectionFloor.normalize()
     raycasterFloor.set(rayOrigin, rayDirectionFloor)
-    const castFloor = [floor]
+    const castFloor = [floor, floorTest]
     const intersectFloor = raycasterFloor.intersectObjects(castFloor)
 
     for(const object of castObject){
@@ -446,20 +455,23 @@ const tick = () =>
     }
     for(const intersect of intersectWall){
         for(const intersect of intersectFloor) {
-            if(intersectFloor[0].point.x < 0) {
+            console.log(intersect.point);
+            if(intersect.point.x < 0) {
                 camera.position.x += 5
             }
-            if(intersectFloor[0].point.x > 0) {
+            if(intersect.point.x > 0) {
                 camera.position.x -= 5
             }
-            if(intersectFloor[0].point.z < 0) {
+            if(intersect.point.z < 0) {
                 camera.position.z += 5
             }
-            if(intersectFloor[0].point.z > 0) {
+            if(intersect.point.z > 0) {
                 camera.position.z -= 5
             }
         }
     }
+    scene.add(new THREE.ArrowHelper(raycasterWall.ray.direction, raycasterWall.ray.origin, 300, 0x0000ff) );
+    scene.add(new THREE.ArrowHelper(raycasterFloor.ray.direction, raycasterFloor.ray.origin, 300, 0x00ff00) );
 
     // Update objects
     monumentLogoTop.rotation.y = 0.1 * elapsedTime
