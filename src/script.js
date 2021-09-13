@@ -255,16 +255,16 @@ gltfLoader.load(gltfURL,(gltf) => {
 // console.log('gltfObjectContainer', gltfObjectContainer.body);
 // console.log('gltfObjectContainer', Object.values(gltfObjectContainer));
 
-//fbx
- let fbxURL = "/models/fbx/exportfbx_standard.fbx"; 
- const fbxLoader = new FBXLoader(); 
- fbxLoader.load(fbxURL,(fbx) => {
-    fbx.scale.set(0.0015, 0.0015, 0.0015)
-    fbx.position.set(15, 0, 0)
-    fbx.rotation.set(0, Math.PI*0.5, 0)
-    scene.add(fbx)
-}
-)
+// //fbx
+//  let fbxURL = "/models/fbx/exportfbx_standard.fbx"; 
+//  const fbxLoader = new FBXLoader(); 
+//  fbxLoader.load(fbxURL,(fbx) => {
+//     fbx.scale.set(0.0015, 0.0015, 0.0015)
+//     fbx.position.set(15, 0, 0)
+//     fbx.rotation.set(0, Math.PI*0.5, 0)
+//     scene.add(fbx)
+// }
+// )
 
 /**
  * Renderer
