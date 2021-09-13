@@ -204,7 +204,7 @@ const doorMaterial = new THREE.MeshStandardMaterial({
 })
 
 const doorToNews = new THREE.Mesh(new THREE.BoxGeometry(5, 10, 0.1),doorMaterial)
-doorToNews.position.set(-20, 3, -24)
+doorToNews.position.set(-20, 3, -23)
 const doorToTtv = new THREE.Mesh(new THREE.BoxGeometry(0.1, 10, 5),doorMaterial)
 doorToTtv.position.set(39, 3, -5)
 const doorToVtr = new THREE.Mesh(new THREE.BoxGeometry(0.1, 10, 5),doorMaterial)
@@ -212,10 +212,10 @@ doorToVtr.position.set(39, 3, 2)
 const doorToPicasso = new THREE.Mesh(new THREE.BoxGeometry(0.1, 10, 5),doorMaterial)
 doorToPicasso.position.set(39, 3, 19)
 const doorToPortfolio = new THREE.Mesh(new THREE.BoxGeometry(0.1, 10, 5),doorMaterial)
-doorToPortfolio.position.set(-39, 3, -19)
-const doorToMediaTeam = new THREE.Mesh(new THREE.BoxGeometry(0.1, 10, 5),doorMaterial)
-doorToMediaTeam.position.set(-39, 3, 19)
-scene.add(doorToNews, doorToTtv, doorToVtr, doorToPicasso, doorToPortfolio, doorToMediaTeam)
+doorToPortfolio.position.set(-38, 3, -19)
+// const doorToMediaTeam = new THREE.Mesh(new THREE.BoxGeometry(0.1, 10, 5),doorMaterial)
+// doorToMediaTeam.position.set(-38, 3, 19)
+scene.add(doorToNews, doorToTtv, doorToVtr, doorToPicasso, doorToPortfolio)
 
 //objects
 const objectMaterial = new THREE.MeshStandardMaterial({
@@ -228,9 +228,9 @@ const monumentMaterial = new THREE.MeshStandardMaterial({
 })
 
 const wallOfFame = new THREE.Mesh(new THREE.BoxGeometry(15, 8, 0.3),objectMaterial)
-wallOfFame.position.set(-9, 4, -24)
+wallOfFame.position.set(-9, 4, -23)
 const wallOfMomentum = new THREE.Mesh(new THREE.BoxGeometry(6, 8, 0.3),objectMaterial)
-wallOfMomentum.position.set(3, 4, -24)
+wallOfMomentum.position.set(3, 4, -23)
 //
 const grpupIntro = new THREE.Group();
 grpupIntro.add(wallOfFame, wallOfMomentum)
