@@ -156,6 +156,7 @@ const floorMaterial = new THREE.MeshStandardMaterial({
 const wallMaterial = new THREE.MeshStandardMaterial({
     roughness: 0.4,
     color: '#06AED5', 
+    side: THREE.DoubleSide
 })
 
 const floor = new THREE.Mesh(new THREE.PlaneGeometry(80, 50),floorMaterial)
@@ -266,7 +267,7 @@ stickerOfIr.position.set(31, 3, 24)
 const grpupDock = new THREE.Group();
 grpupSns.add(stickerOfTech, stickerOfArch, stickerOfIr)
 
-const monumentLogoBot = new THREE.Mesh(new THREE.BoxGeometry(1, 2, 1), monumentMaterial)
+const monumentLogoBot = new THREE.Mesh(new THREE.BoxGeometry(2, 4, 2), monumentMaterial)
 monumentLogoBot.position.set(0, 0, 0)
 const monumentLogoTop = new THREE.Mesh(new THREE.BoxGeometry(0.75, 0.75, 0.75), monumentMaterial)
 monumentLogoTop.position.set(0, 2, 0)
@@ -345,11 +346,21 @@ gltfLoader.load(gltfURL,(gltf) => {
 /**
  * Testing Space
  */
- const floorTest = new THREE.Mesh(new THREE.PlaneGeometry(20, 50))
+ const floorTestMaterial = new THREE.MeshStandardMaterial({
+    roughness: 0.4,
+    color: '#766153', 
+})
+
+ const floorTest = new THREE.Mesh(new THREE.PlaneGeometry(20, 50), floorTestMaterial)
  floorTest.rotation.set(-Math.PI*0.5, 0, 0)
  floorTest.position.set(-50, -1, 0)
  scene.add(floorTest)
- //ToDo: plane에 벽 만들어서 로직 test 진행
+
+ const wallLeftTest = new THREE.Mesh(new THREE.BoxGeometry(1, 20, 50),wallMaterial)
+ wallLeftTest.position.set(-59, 0, 0)
+const wallLeftTestContainer = []
+const wallLeftTestCollision = new objectColisionBox(wallLeftTestContainer, wallLeftTest, floorMass)
+wallLeftTestCollision.createBox()
 
 /**
  * Renderer
@@ -423,10 +434,8 @@ const tick = () =>
     wallLeftContainer[0].box.position.copy(wallLeftContainer[0].body.position)
     floorBody.position.copy(floor.position)
     sphereBallContainer[0].sphere.position.copy(sphereBallContainer[0].body.position)
-    // cube2Container[0].box.position.copy(cube2Container[0].body.position)
-    // cube2Container[0].box.quaternion.copy(cube2Container[0].body.quaternion)
-    // objectsToUpdate[0].box.position.copy(objectsToUpdate[0].body.position)
-    // objectsToUpdate[0].box.quaternion.copy(objectsToUpdate[0].body.quaternion)
+
+    wallLeftTestContainer[0].box.position.copy(wallLeftTestContainer[0].body.position)
 
     /**
     * Raycaster
@@ -439,7 +448,7 @@ const tick = () =>
     const rayDirectionWall = new THREE.Vector3(1,10,1)
     rayDirectionWall.normalize()
     raycasterWall.set(rayOrigin, rayDirectionWall)
-    const castObject = [wallFront, wallBack, wallRight, wallLeft]
+    const castObject = [wallFront, wallBack, wallRight, wallLeft, wallLeftTest, monumentLogoBot]
     const intersectWall = raycasterWall.intersectObjects(castObject)
 
     //camera & floor
@@ -449,13 +458,14 @@ const tick = () =>
     raycasterFloor.set(rayOrigin, rayDirectionFloor)
     const castFloor = [floor, floorTest]
     const intersectFloor = raycasterFloor.intersectObjects(castFloor)
-
+   
     for(const object of castObject){
         object.material.color.set('#88B7B5')
     }
     for(const intersect of intersectWall){
+        console.log('wall', intersectWall[0].point);
         for(const intersect of intersectFloor) {
-            console.log(intersect.point);
+            console.log('floor', intersect.set);
             if(intersect.point.x < 0) {
                 camera.position.x += 5
             }
@@ -470,8 +480,8 @@ const tick = () =>
             }
         }
     }
-    scene.add(new THREE.ArrowHelper(raycasterWall.ray.direction, raycasterWall.ray.origin, 300, 0x0000ff) );
-    scene.add(new THREE.ArrowHelper(raycasterFloor.ray.direction, raycasterFloor.ray.origin, 300, 0x00ff00) );
+    // scene.add(new THREE.ArrowHelper(raycasterWall.ray.direction, raycasterWall.ray.origin, 300, 0x0000ff) );
+    // scene.add(new THREE.ArrowHelper(raycasterFloor.ray.direction, raycasterFloor.ray.origin, 300, 0x00ff00) );
 
     // Update objects
     monumentLogoTop.rotation.y = 0.1 * elapsedTime
