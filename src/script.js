@@ -267,7 +267,7 @@ stickerOfIr.position.set(31, 3, 24)
 const grpupDock = new THREE.Group();
 grpupSns.add(stickerOfTech, stickerOfArch, stickerOfIr)
 
-const monumentLogoBot = new THREE.Mesh(new THREE.BoxGeometry(2, 4, 2), monumentMaterial)
+const monumentLogoBot = new THREE.Mesh(new THREE.BoxGeometry(1, 2, 1), monumentMaterial)
 monumentLogoBot.position.set(0, 0, 0)
 const monumentLogoTop = new THREE.Mesh(new THREE.BoxGeometry(0.75, 0.75, 0.75), monumentMaterial)
 monumentLogoTop.position.set(0, 2, 0)
@@ -448,7 +448,7 @@ const tick = () =>
     const rayDirectionWall = new THREE.Vector3(1,10,1)
     rayDirectionWall.normalize()
     raycasterWall.set(rayOrigin, rayDirectionWall)
-    const castObject = [wallFront, wallBack, wallRight, wallLeft, wallLeftTest, monumentLogoBot]
+    const castObject = [wallFront, wallBack, wallRight, wallLeft, wallLeftTest]
     const intersectWall = raycasterWall.intersectObjects(castObject)
 
     //camera & floor
@@ -463,20 +463,21 @@ const tick = () =>
         object.material.color.set('#88B7B5')
     }
     for(const intersect of intersectWall){
-        console.log('wall', intersectWall[0].point);
+        // console.log('wall', intersectWall[0].point);
         for(const intersect of intersectFloor) {
-            console.log('floor', intersect.set);
-            if(intersect.point.x < 0) {
+            // console.log('point', intersect.point);
+            console.log('uv', intersect.uv);
+            if(intersect.uv.x < 0.5) {
                 camera.position.x += 5
             }
-            if(intersect.point.x > 0) {
+            if(intersect.uv.x > 0.5) {
                 camera.position.x -= 5
             }
-            if(intersect.point.z < 0) {
-                camera.position.z += 5
-            }
-            if(intersect.point.z > 0) {
+            if(intersect.uv.y < 0.5) {
                 camera.position.z -= 5
+            }
+            if(intersect.uv.y > 0.5) {
+                camera.position.z += 5
             }
         }
     }
