@@ -348,13 +348,25 @@ gltfLoader.load(gltfURL,(gltf) => {
  */
  const floorTestMaterial = new THREE.MeshStandardMaterial({
     roughness: 0.4,
-    color: '#766153', 
+    color: '#280003', 
 })
 
  const floorTest = new THREE.Mesh(new THREE.PlaneGeometry(20, 50), floorTestMaterial)
  floorTest.rotation.set(-Math.PI*0.5, 0, 0)
  floorTest.position.set(-50, -1, 0)
  scene.add(floorTest)
+
+ const wallFrontTest = new THREE.Mesh(new THREE.BoxGeometry(20, 20, 1),wallMaterial)
+ wallFrontTest.position.set(-50, 0, -25)
+const wallFrontTestContainer = []
+const wallFrontTestCollision = new objectColisionBox(wallFrontTestContainer, wallFrontTest, floorMass)
+wallFrontTestCollision.createBox()
+
+const wallBackTest = new THREE.Mesh(new THREE.BoxGeometry(20, 20, 1),wallMaterial)
+wallBackTest.position.set(-50, 0, 25)
+const wallBackTestContainer = []
+const wallBackTestCollision = new objectColisionBox(wallBackTestContainer, wallBackTest, floorMass)
+wallBackTestCollision.createBox()
 
  const wallLeftTest = new THREE.Mesh(new THREE.BoxGeometry(1, 20, 50),wallMaterial)
  wallLeftTest.position.set(-59, 0, 0)
@@ -435,6 +447,8 @@ const tick = () =>
     floorBody.position.copy(floor.position)
     sphereBallContainer[0].sphere.position.copy(sphereBallContainer[0].body.position)
 
+    wallFrontTestContainer[0].box.position.copy(wallFrontTestContainer[0].body.position)
+    wallBackTestContainer[0].box.position.copy(wallBackTestContainer[0].body.position)
     wallLeftTestContainer[0].box.position.copy(wallLeftTestContainer[0].body.position)
 
     /**
@@ -448,7 +462,7 @@ const tick = () =>
     const rayDirectionWall = new THREE.Vector3(1,10,1)
     rayDirectionWall.normalize()
     raycasterWall.set(rayOrigin, rayDirectionWall)
-    const castObject = [wallFront, wallBack, wallRight, wallLeft, wallLeftTest]
+    const castObject = [wallFront, wallBack, wallRight, wallLeft, wallFrontTest, wallBackTest, wallLeftTest]
     const intersectWall = raycasterWall.intersectObjects(castObject)
 
     //camera & floor
@@ -463,9 +477,7 @@ const tick = () =>
         object.material.color.set('#88B7B5')
     }
     for(const intersect of intersectWall){
-        // console.log('wall', intersectWall[0].point);
         for(const intersect of intersectFloor) {
-            // console.log('point', intersect.point);
             console.log('uv', intersect.uv);
             if(intersect.uv.x < 0.5) {
                 camera.position.x += 5
