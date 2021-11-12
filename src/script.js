@@ -4,6 +4,8 @@ import { PointerLockControls } from 'three/examples/jsm/controls/PointerLockCont
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader.js';
 import CANNON from 'cannon';
+import * as environment from './environment'
+import * as objects from './objects'
 
 /**
  * Base
