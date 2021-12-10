@@ -6,6 +6,7 @@ import * as objects from './objects'
 
 const canvas = document.querySelector('canvas.webgl');
 const scene = new THREE.Scene();
+scene.background = new THREE.Color( 0x88ccff );
  const sizes = {
     width: window.innerWidth,
     height: window.innerHeight
@@ -78,8 +79,7 @@ function processKeyboard() {
     }
 }
 
-environment.base.map(x=>{scene.add(x)})
-objects.baseObjects.map(x=>{scene.add(x)})
+environment.basicSceneAdd(scene)
 objects.loadMoldeledObjects(scene)
 
 /**

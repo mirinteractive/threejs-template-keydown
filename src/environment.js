@@ -11,7 +11,8 @@ directionalLight.shadow.normalBias = 0.05
 const world = new CANNON.World();
 world.gravity.set(0, - 9.82, 0);
 
-const base = [ambientLight, directionalLight]
-const physics = [world]
+const basicSceneAdd=(scene)=>{
+  scene.add(ambientLight, directionalLight)
+}
 
-export { base, physics }
+export { basicSceneAdd }
