@@ -19,7 +19,6 @@ window.addEventListener('resize', () =>
     camera.aspect = sizes.width / sizes.height
     camera.updateProjectionMatrix()
 
-    // Update renderer
     renderer.setSize(sizes.width, sizes.height)
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
 })
@@ -29,9 +28,6 @@ window.addEventListener('resize', () =>
  */
 // Base camera
 const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height, 0.1, 100)
-camera.position.set(-30, 1, 10)
-//proper rotation point
-camera.rotation.set(0, -Math.PI*0.3, 0)
 scene.add(camera)
 
 /**
