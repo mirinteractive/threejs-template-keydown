@@ -18,10 +18,3 @@ body
     outline: none;
     z-index: 1;
 }
-
-#button {
-    position: absolute;
-    background-color: #086788;
-    color: #F0C808;
-    z-index: 10;
-}
