@@ -4,6 +4,7 @@
 - create basic form of collision between space and camera
 - use keydown event and mouse to move/rotate camera
 - prevents users to move outside from wall without raycasting and uv detection
+- ... and lots of other stuff
 
 ## Should consider followings..
 - you need to combine (calls **join** in blender world) entire scene
