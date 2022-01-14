@@ -6,6 +6,27 @@
     <title>fps view template</title>
 </head>
 <body>
+    <section id="loading-screen">
+        <div id='loading'>
+            <div id='loading-title'>LOADING</div>
+            <svg class="loading-container" id='loading-progress-outline'>
+                <rect   
+                y="20"
+                width="501" height="57"
+                rx="5" ry="5"
+                stroke-width=4 stroke="#ffffff" fill='none' />
+            </svg>
+            <svg class="loading-container">
+                <rect   
+                id='loading-progress-fill'
+                x="6" y="26"
+                width="2" height="44"
+                rx="5" ry="5"
+                fill="#ffffff" />
+            </svg>
+            <div id="loader"></div>
+        </div>
+    </section>
     <canvas class="webgl"></canvas>
 </body>
 </html>
