@@ -1,4 +1,4 @@
-const collisionURL = "/models/gltf/220112/220112_01_export.gltf";
+const collisionURL = "/models/gltf/220118/220118_가운데벽제거_02.gltf";
 const cylinderURL = "models/fbx/cylinder.fbx"; 
 
 const updateAllMaterials = (scene) =>{
