@@ -27,7 +27,9 @@ body
 
 .loading-container {
     width: 501px;
-    position: absolute;
+    display: block;
+    margin: 0 auto;
+    text-align: center;
 }
 
 #loading-screen {
@@ -40,23 +42,14 @@ body
 	background-color: #000000;
 	opacity: 1;
  	transition: 1s opacity;
-    /* background-image:url(../static/textures/bg-loading.png);
-    background-repeat: no-repeat;
-    background-size: auto;
-    background-position: center center; */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }
 
 #loading-screen.fade-out {
     opacity: 0;
-}
-
-#loading {
-    display: block;
-    position: relative;
-    top: 45%;
-    left: 35%;
-    margin: auto;
-    /* width: 50%; */
 }
 
 #loading-title {
@@ -65,5 +58,8 @@ body
     font-family: "Roboto", sans-serif;
     font-weight: 400;
     text-align: center;
-    width: 501px;
+} 
+
+#loading-process {
+    height: 57px;
 }
